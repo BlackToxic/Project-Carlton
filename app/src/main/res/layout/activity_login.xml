@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.projectcarlton.fbljk.projectcarlton.Activities.LoginActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
+
+            <EditText
+                android:id="@+id/login_username"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:hint="@string/login_username_hint"/>
+
+            <EditText
+                android:id="@+id/login_password"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="10dp"
+                android:inputType="textPassword"
+                android:hint="@string/login_password_hint"
+                android:layout_below="@id/login_username"/>
+
+            <Button
+                android:id="@+id/login_loginbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="140dp"
+                android:layout_marginEnd="140dp"
+                android:layout_marginTop="20dp"
+                android:textAllCaps="true"
+                android:text="@string/login_loginbutton_text"
+                android:layout_below="@id/login_password"
+                android:background="@color/colorPrimary"
+                android:textColor="@android:color/white"/>
+
+            <TextView
+                android:id="@+id/login_registerbutton"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:gravity="center_vertical"
+                android:layout_marginStart="147dp"
+                android:layout_marginEnd="140dp"
+                android:layout_marginTop="50dp"
+                android:layout_below="@id/login_loginbutton"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="@string/login_registerbutton_text"
+                android:textColor="@color/colorPrimary"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>
