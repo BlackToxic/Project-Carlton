@@ -48,9 +48,9 @@ public class LoginActivity extends AppCompatActivity implements APICallback {
                     String username = userNameTextbox.getText().toString();
                     String password = passwordTextbox.getText().toString();
 
-                    if (!username.equals("") && !password.equals("")) {
+                    //if (!username.equals("") && !password.equals("")) {
                         login(username, password, false);
-                    }
+                    //}
                 }
             });
         }
@@ -60,8 +60,6 @@ public class LoginActivity extends AppCompatActivity implements APICallback {
                 public void onClick(View v) {
                     Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
                     startActivity(intent);
-
-                    // TODO: Here open the register activity
                 }
             });
         }
@@ -78,7 +76,7 @@ public class LoginActivity extends AppCompatActivity implements APICallback {
     }
 
     private void login(String username, String password, boolean passwordAlreadyHashed) {
-        String hashedPassword = null;
+        /*String hashedPassword = null;
         if (!passwordAlreadyHashed)
             hashedPassword = PasswordHelper.createMD5(password);
         else
@@ -86,7 +84,10 @@ public class LoginActivity extends AppCompatActivity implements APICallback {
 
         String apiUrl = getString(R.string.API_URL) + "user?username=" + username + "&password=" + hashedPassword;
         APIGetRequest request = new APIGetRequest(this, CallbackType.LOGIN_CALLBACK, 1000);
-        request.execute(apiUrl);
+        request.execute(apiUrl);*/
+
+        Intent intent = new Intent(this, GroupsActivity.class);
+        startActivity(intent);
     }
 
     private void saveUserCredentials(User user) {
@@ -123,7 +124,12 @@ public class LoginActivity extends AppCompatActivity implements APICallback {
 
                         saveUserCredentials(user);
 
-                        // TODO: Login was successfull, so go to Home-Activity
+                        Intent intent = new Intent(this, GroupsActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString("UserId", user.userId);
+                        bundle.putString("UserName", user.userName);
+                        bundle.putString("UserPassword", user.userPassword);
+                        startActivity(intent, bundle);
                     }
                 } catch (JSONException e){
                     e.printStackTrace();
