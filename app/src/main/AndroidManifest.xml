@@ -22,7 +22,7 @@
             android:name=".Activities.RegisterActivity"
             android:theme="@style/AppThemeNoActionBar" />
         <activity android:name=".Activities.GroupsActivity"
-                  android:label="Gruppen"></activity>
+                  android:theme="@style/AppThemeNoActionBar"/>
     </application>
 
 </manifest>

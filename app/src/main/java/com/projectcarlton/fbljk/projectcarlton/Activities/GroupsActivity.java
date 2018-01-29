@@ -2,6 +2,10 @@ package com.projectcarlton.fbljk.projectcarlton.Activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -22,6 +26,10 @@ public class GroupsActivity extends AppCompatActivity implements APICallback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groups);
 
+        Toolbar grouptoolbar = (Toolbar) findViewById(R.id.groups_toolbar);
+        grouptoolbar.setTitle(R.string.groups_actionbar_title);
+        setSupportActionBar(grouptoolbar);
+
         progressBarLayout = (LinearLayout) findViewById(R.id.groups_progressbar_layout);
         progressBarLayout.setVisibility(View.VISIBLE);
 
@@ -35,6 +43,26 @@ public class GroupsActivity extends AppCompatActivity implements APICallback {
             String apiUrl = getString(R.string.API_URL) + "group?userid=";// + currentUser.userId;
             APIGetRequest request = new APIGetRequest(this, CallbackType.LOADINGGROUPS_CALLBACK, 5000);
             request.execute(apiUrl);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.groups_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.groups_action_add:
+
+                // TODO: Open activity to create a new group
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
