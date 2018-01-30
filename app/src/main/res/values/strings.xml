@@ -22,6 +22,7 @@
     <string name="register_registerbutton_text">Registrieren</string>
 
     <string name="groups_action_add_title">Hinzufügen</string>
+    <string name="groups_action_invites_title">Einladungen</string>
     <string name="groups_actionbar_title">Gruppen</string>
 
 </resources>

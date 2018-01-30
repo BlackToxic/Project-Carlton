@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/groups_action_invites"
+        android:icon="@drawable/ic_email_black_24dp"
+        android:title="@string/groups_action_invites_title"
+        app:showAsAction="ifRoom"/>
+
+    <item
         android:id="@+id/groups_action_add"
         android:icon="@drawable/ic_add_black_24dp"
         android:title="@string/groups_action_add_title"

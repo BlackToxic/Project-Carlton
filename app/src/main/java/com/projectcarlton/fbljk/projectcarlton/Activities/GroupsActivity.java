@@ -40,7 +40,7 @@ public class GroupsActivity extends AppCompatActivity implements APICallback {
             currentUser.userPassword = savedInstanceState.getString("UserPassword");
 
             // TODO: Make this pretty
-            String apiUrl = getString(R.string.API_URL) + "group?userid=";// + currentUser.userId;
+            String apiUrl = getString(R.string.API_URL) + "group?userid=" + currentUser.userId;
             APIGetRequest request = new APIGetRequest(this, CallbackType.LOADINGGROUPS_CALLBACK, 5000);
             request.execute(apiUrl);
         }
