@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">ProjectCarlton</string>
 
-    <string name="API_URL">API</string>
+    <string name="API_URL">http://84.135.26.96/ProjectCarltonAPI/</string>
 
     <string name="loginresponse_unknown_credentials">Benutzername oder Password nicht korrekt.</string>
     <string name="loginresponse_noactivated_account">Der Account wurde noch nicht durch den Link in der Email bestätigt.</string>

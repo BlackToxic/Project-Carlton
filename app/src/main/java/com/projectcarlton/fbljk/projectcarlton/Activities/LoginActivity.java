@@ -48,9 +48,9 @@ public class LoginActivity extends AppCompatActivity implements APICallback {
                     String username = userNameTextbox.getText().toString();
                     String password = passwordTextbox.getText().toString();
 
-                    //if (!username.equals("") && !password.equals("")) {
+                    if (!username.equals("") && !password.equals("")) {
                         login(username, password, false);
-                    //}
+                    }
                 }
             });
         }
@@ -76,18 +76,16 @@ public class LoginActivity extends AppCompatActivity implements APICallback {
     }
 
     private void login(String username, String password, boolean passwordAlreadyHashed) {
-        /*String hashedPassword = null;
+        String hashedPassword = null;
         if (!passwordAlreadyHashed)
             hashedPassword = PasswordHelper.createMD5(password);
         else
             hashedPassword = password;
 
+        // TODO: Implement getting the DeviceId for GCM
         String apiUrl = getString(R.string.API_URL) + "user?username=" + username + "&password=" + hashedPassword;
         APIGetRequest request = new APIGetRequest(this, CallbackType.LOGIN_CALLBACK, 1000);
-        request.execute(apiUrl);*/
-
-        Intent intent = new Intent(this, GroupsActivity.class);
-        startActivity(intent);
+        request.execute(apiUrl);
     }
 
     private void saveUserCredentials(User user) {

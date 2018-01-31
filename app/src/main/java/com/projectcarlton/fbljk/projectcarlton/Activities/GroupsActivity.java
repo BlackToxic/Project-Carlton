@@ -61,6 +61,11 @@ public class GroupsActivity extends AppCompatActivity implements APICallback {
                 // TODO: Open activity to create a new group
 
                 return true;
+            case R.id.groups_action_invites:
+
+                // TODO: Open activity to accept invites
+
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
