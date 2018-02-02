@@ -8,13 +8,18 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.iid.InstanceID;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
 import com.projectcarlton.fbljk.projectcarlton.API.Exception.APIException;
 import com.projectcarlton.fbljk.projectcarlton.API.Request.APIGetRequest;
+import com.projectcarlton.fbljk.projectcarlton.API.Request.APILoginGetRequest;
 import com.projectcarlton.fbljk.projectcarlton.Data.User;
 import com.projectcarlton.fbljk.projectcarlton.Helpers.PasswordHelper;
 import com.projectcarlton.fbljk.projectcarlton.R;
@@ -28,11 +33,16 @@ public class LoginActivity extends AppCompatActivity implements APICallback {
     private EditText passwordTextbox;
     private Button loginButton;
     private TextView registerButton;
+    private LinearLayout progressBarLayout;
+    private RelativeLayout generalLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        progressBarLayout = (LinearLayout) findViewById(R.id.login_progressbar_layout);
+        generalLayout = (RelativeLayout) findViewById(R.id.login_general_layout);
 
         checkForLoginData();
 
@@ -66,7 +76,7 @@ public class LoginActivity extends AppCompatActivity implements APICallback {
     }
 
     private void checkForLoginData() {
-        SharedPreferences pref = getSharedPreferences("PROECTCARLTON_PREF", MODE_PRIVATE);
+        SharedPreferences pref = getSharedPreferences("PROJECTCARLTON_PREF", MODE_PRIVATE);
         String username = pref.getString("UserName", null);
         String password = pref.getString("UserPassword", null);
 
@@ -76,16 +86,17 @@ public class LoginActivity extends AppCompatActivity implements APICallback {
     }
 
     private void login(String username, String password, boolean passwordAlreadyHashed) {
+        generalLayout.setVisibility(View.GONE);
+        progressBarLayout.setVisibility(View.VISIBLE);
+
         String hashedPassword = null;
         if (!passwordAlreadyHashed)
             hashedPassword = PasswordHelper.createMD5(password);
         else
             hashedPassword = password;
 
-        // TODO: Implement getting the DeviceId for GCM
-        String apiUrl = getString(R.string.API_URL) + "user?username=" + username + "&password=" + hashedPassword;
-        APIGetRequest request = new APIGetRequest(this, CallbackType.LOGIN_CALLBACK, 1000);
-        request.execute(apiUrl);
+        APILoginGetRequest request = new APILoginGetRequest(this, CallbackType.LOGIN_CALLBACK, 1000, getApplicationContext());
+        request.execute(getString(R.string.API_URL), username, hashedPassword);
     }
 
     private void saveUserCredentials(User user) {
@@ -132,7 +143,14 @@ public class LoginActivity extends AppCompatActivity implements APICallback {
                 } catch (JSONException e){
                     e.printStackTrace();
                 }
+            } else {
+                Toast toast = Toast.makeText(getApplicationContext(), R.string.API_ERROR, Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                toast.show();
             }
+
+            progressBarLayout.setVisibility(View.GONE);
+            generalLayout.setVisibility(View.VISIBLE);
         }
     }
 }

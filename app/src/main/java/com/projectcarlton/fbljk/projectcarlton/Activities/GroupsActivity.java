@@ -1,5 +1,6 @@
 package com.projectcarlton.fbljk.projectcarlton.Activities;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -59,11 +60,15 @@ public class GroupsActivity extends AppCompatActivity implements APICallback {
             case R.id.groups_action_add:
 
                 // TODO: Open activity to create a new group
+                Intent newgroup_intent = new Intent(this, NewGroupActivity.class);
+                startActivity(newgroup_intent);
 
                 return true;
             case R.id.groups_action_invites:
 
                 // TODO: Open activity to accept invites
+                Intent invites_intent = new Intent(this, GroupInvitationsActivity.class);
+                startActivity(invites_intent);
 
                 return true;
             default:

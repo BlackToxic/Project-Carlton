@@ -3,6 +3,8 @@
 
     <string name="API_URL">http://84.135.26.96/ProjectCarltonAPI/</string>
 
+    <string name="API_ERROR">Ups, da ist etwas schief gelaufen! Bitte versuch es noch einmal!</string>
+
     <string name="loginresponse_unknown_credentials">Benutzername oder Password nicht korrekt.</string>
     <string name="loginresponse_noactivated_account">Der Account wurde noch nicht durch den Link in der Email bestätigt.</string>
 
@@ -24,5 +26,9 @@
     <string name="groups_action_add_title">Hinzufügen</string>
     <string name="groups_action_invites_title">Einladungen</string>
     <string name="groups_actionbar_title">Gruppen</string>
+
+    <string name="newgroup_title">Neue Gruppe</string>
+
+    <string name="groupinvitations_title">Einladungen</string>
 
 </resources>

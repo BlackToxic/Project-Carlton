@@ -10,7 +10,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
+        <LinearLayout
+            android:id="@+id/login_progressbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ProgressBar
+                android:id="@+id/groups_progressbar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
         <RelativeLayout
+            android:id="@+id/login_general_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true">
@@ -51,15 +68,14 @@
                 android:id="@+id/login_registerbutton"
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
-                android:gravity="center_vertical"
-                android:layout_marginStart="147dp"
-                android:layout_marginEnd="140dp"
-                android:layout_marginTop="50dp"
-                android:layout_below="@id/login_loginbutton"
+                android:layout_below="@+id/login_loginbutton"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="70dp"
                 android:clickable="true"
                 android:focusable="true"
+                android:gravity="center_vertical"
                 android:text="@string/login_registerbutton_text"
-                android:textColor="@color/colorPrimary"/>
+                android:textColor="@color/colorPrimary" />
 
         </RelativeLayout>
 
