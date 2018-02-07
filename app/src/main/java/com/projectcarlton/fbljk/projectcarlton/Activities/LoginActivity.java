@@ -138,7 +138,8 @@ public class LoginActivity extends AppCompatActivity implements APICallback {
                         bundle.putString("UserId", user.userId);
                         bundle.putString("UserName", user.userName);
                         bundle.putString("UserPassword", user.userPassword);
-                        startActivity(intent, bundle);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
                     }
                 } catch (JSONException e){
                     e.printStackTrace();
