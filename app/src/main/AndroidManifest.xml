@@ -50,7 +50,9 @@
         <activity
             android:name=".Activities.GroupsActivity"
             android:theme="@style/AppThemeNoActionBar" />
-        <activity android:name=".Activities.NewGroupActivity" />
+        <activity
+            android:name=".Activities.NewGroupActivity"
+            android:theme="@style/AppThemeNoActionBar"/>
         <activity android:name=".Activities.GroupInvitationsActivity"></activity>
     </application>
 

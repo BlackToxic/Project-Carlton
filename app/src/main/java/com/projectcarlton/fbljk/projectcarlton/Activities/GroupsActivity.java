@@ -75,14 +75,19 @@ public class GroupsActivity extends AppCompatActivity implements APICallback {
         switch (item.getItemId()){
             case R.id.groups_action_add:
 
-                // TODO: Open activity to create a new group
                 Intent newgroup_intent = new Intent(this, NewGroupActivity.class);
+                if (currentUser != null) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("UserId", currentUser.userId);
+                    bundle.putString("UserName", currentUser.userName);
+                    bundle.putString("UserPassword", currentUser.userPassword);
+                    newgroup_intent.putExtras(bundle);
+                }
                 startActivity(newgroup_intent);
 
                 return true;
             case R.id.groups_action_invites:
 
-                // TODO: Open activity to accept invites
                 Intent invites_intent = new Intent(this, GroupInvitationsActivity.class);
                 startActivity(invites_intent);
 
@@ -102,13 +107,7 @@ public class GroupsActivity extends AppCompatActivity implements APICallback {
         if (callbackType == CallbackType.LOADINGGROUPS_CALLBACK) {
             if (resultString != null && !resultString.equals("")) {
                 try {
-                    JSONObject resultObject = new JSONObject(resultString);
-
-                    if (resultObject.has("code")) {
-                        int errorCode = resultObject.getInt("code");
-
-
-                    } else if (resultObject.has("groupid")) {
+                    if (resultString.contains("groupid")) {
                         groups = new ArrayList<Group>();
 
                         JSONArray array = new JSONArray(resultString);
@@ -126,6 +125,13 @@ public class GroupsActivity extends AppCompatActivity implements APICallback {
                         final ArrayAdapter<Group> adapter = new ArrayAdapter<Group>(this, android.R.layout.simple_list_item_1, groups);
                         groupListView.setAdapter(adapter);
                         groupListView.setVisibility(View.VISIBLE);
+                    } else {
+                        JSONObject resultObject = new JSONObject(resultString);
+
+                        if (resultObject.has("code")) {
+                            int errorCode = resultObject.getInt("code");
+
+                        }
                     }
                 } catch (Exception ex) {
 

@@ -28,6 +28,10 @@
     <string name="groups_actionbar_title">Gruppen</string>
 
     <string name="newgroup_title">Neue Gruppe</string>
+    <string name="newgroup_groupname_hint">Gruppenname</string>
+    <string name="newgroup_groupdescription_hint">Gruppenbeschreibung</string>
+
+    <string name="newgroup_action_done_title">Fertig</string>
 
     <string name="groupinvitations_title">Einladungen</string>
 
