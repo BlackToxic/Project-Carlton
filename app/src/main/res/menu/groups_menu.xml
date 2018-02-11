@@ -14,4 +14,10 @@
         android:title="@string/groups_action_add_title"
         app:showAsAction="ifRoom"/>
 
+    <item
+        android:id="@+id/groups_action_profile"
+        android:icon="@drawable/ic_person_black_24dp"
+        android:title="@string/groups_action_profile_title"
+        app:showAsAction="ifRoom"/>
+
 </menu>

@@ -18,8 +18,6 @@ import com.projectcarlton.fbljk.projectcarlton.R;
 
 public class NewGroupActivity extends AppCompatActivity implements APICallback {
 
-    private User currentUser;
-
     private EditText groupname, groupdesc;
     private LinearLayout progressBarLayout;
 
@@ -36,13 +34,6 @@ public class NewGroupActivity extends AppCompatActivity implements APICallback {
         groupdesc = (EditText) findViewById(R.id.newgroup_groupdescription);
 
         progressBarLayout = (LinearLayout) findViewById(R.id.newgroup_progressbar_layout);
-
-        if (getIntent() != null && getIntent().getExtras() != null) {
-            currentUser = new User();
-            currentUser.userId = getIntent().getExtras().getString("UserId");
-            currentUser.userName = getIntent().getExtras().getString("UserName");
-            currentUser.userPassword = getIntent().getExtras().getString("UserPassword");
-        }
     }
 
     @Override
@@ -61,7 +52,7 @@ public class NewGroupActivity extends AppCompatActivity implements APICallback {
                 String groupDesc = groupdesc.getText().toString();
 
                 if (!groupName.equals("") && !groupDesc.equals("")) {
-                    String apiUrl = getString(R.string.API_URL) + "group?userid=" + currentUser.userId + "&groupname=" + groupName + "&groupdescription=" + groupDesc;
+                    String apiUrl = getString(R.string.API_URL) + "group?userid=" + GroupsActivity.currentUser.userId + "&groupname=" + groupName + "&groupdescription=" + groupDesc;
                     APIGetRequest request = new APIGetRequest(this, CallbackType.CREATEGROUP_CALLBACK, 5000);
                     progressBarLayout.setVisibility(View.VISIBLE);
                     request.execute(apiUrl);
@@ -79,6 +70,7 @@ public class NewGroupActivity extends AppCompatActivity implements APICallback {
         if (callbackType == CallbackType.CREATEGROUP_CALLBACK) {
             if (resultString != null && !resultString.equals("")) {
                 // TODO: Go back to GroupActivity and reload
+                onBackPressed();
             }
 
             progressBarLayout.setVisibility(View.GONE);

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">ProjectCarlton</string>
 
-    <string name="API_URL">http://84.135.26.96/ProjectCarltonAPI/</string>
+    <string name="API_URL">http://84.135.28.3/ProjectCarltonAPI/</string>
 
     <string name="API_ERROR">Ups, da ist etwas schief gelaufen! Bitte versuch es noch einmal!</string>
 
@@ -25,7 +25,8 @@
 
     <string name="groups_action_add_title">Hinzufügen</string>
     <string name="groups_action_invites_title">Einladungen</string>
-    <string name="groups_actionbar_title">Gruppen</string>
+    <string name="groups_action_profile_title">Profil</string>
+    <string name="groups_actionbar_title">Meine Gruppen</string>
 
     <string name="newgroup_title">Neue Gruppe</string>
     <string name="newgroup_groupname_hint">Gruppenname</string>
@@ -34,5 +35,8 @@
     <string name="newgroup_action_done_title">Fertig</string>
 
     <string name="groupinvitations_title">Einladungen</string>
+
+    <string name="group_invitebutton_text">Einladen</string>
+    <string name="group_membersheader_text">Mitglieder</string>
 
 </resources>

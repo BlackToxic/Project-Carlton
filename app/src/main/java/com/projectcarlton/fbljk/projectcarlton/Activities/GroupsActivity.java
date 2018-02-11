@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -18,6 +19,7 @@ import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
 import com.projectcarlton.fbljk.projectcarlton.API.Exception.APIException;
 import com.projectcarlton.fbljk.projectcarlton.API.Request.APIGetRequest;
+import com.projectcarlton.fbljk.projectcarlton.Adapter.GroupAdapter;
 import com.projectcarlton.fbljk.projectcarlton.Data.Group;
 import com.projectcarlton.fbljk.projectcarlton.Data.User;
 import com.projectcarlton.fbljk.projectcarlton.R;
@@ -29,8 +31,9 @@ import java.util.ArrayList;
 
 public class GroupsActivity extends AppCompatActivity implements APICallback {
 
-    private User currentUser;
+    public static User currentUser;
     private ArrayList<Group> groups;
+    private static GroupAdapter adapter;
 
     private LinearLayout progressBarLayout;
     private ListView groupListView;
@@ -76,13 +79,6 @@ public class GroupsActivity extends AppCompatActivity implements APICallback {
             case R.id.groups_action_add:
 
                 Intent newgroup_intent = new Intent(this, NewGroupActivity.class);
-                if (currentUser != null) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("UserId", currentUser.userId);
-                    bundle.putString("UserName", currentUser.userName);
-                    bundle.putString("UserPassword", currentUser.userPassword);
-                    newgroup_intent.putExtras(bundle);
-                }
                 startActivity(newgroup_intent);
 
                 return true;
@@ -92,6 +88,13 @@ public class GroupsActivity extends AppCompatActivity implements APICallback {
                 startActivity(invites_intent);
 
                 return true;
+
+            case R.id.groups_action_profile:
+
+
+
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -122,8 +125,25 @@ public class GroupsActivity extends AppCompatActivity implements APICallback {
                             groups.add(newGroup);
                         }
 
-                        final ArrayAdapter<Group> adapter = new ArrayAdapter<Group>(this, android.R.layout.simple_list_item_1, groups);
+                        adapter = new GroupAdapter(groups, getApplicationContext());
                         groupListView.setAdapter(adapter);
+                        groupListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                                Group group = groups.get(position);
+
+                                Intent group_intent = new Intent(GroupsActivity.this, GroupActivity.class);
+                                Bundle bundle = new Bundle();
+                                bundle.putString("GroupId", group.groupId);
+                                bundle.putString("GroupName", group.groupName);
+                                bundle.putString("GroupDescription", group.groupDescription);
+                                bundle.putString("GroupAdmin", group.groupAdmin);
+                                group_intent.putExtras(bundle);
+                                startActivity(group_intent);
+
+                            }
+                        });
                         groupListView.setVisibility(View.VISIBLE);
                     } else {
                         JSONObject resultObject = new JSONObject(resultString);
