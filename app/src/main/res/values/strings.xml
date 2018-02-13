@@ -39,4 +39,6 @@
     <string name="group_invitebutton_text">Einladen</string>
     <string name="group_membersheader_text">Mitglieder</string>
 
+    <string name="invite_title">Benutzer</string>
+
 </resources>

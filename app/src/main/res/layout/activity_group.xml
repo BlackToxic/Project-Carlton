@@ -48,6 +48,7 @@
             android:textSize="15sp"
             android:gravity="start|center_vertical"
             android:paddingStart="20dp"
+            android:paddingEnd="20dp"
             android:drawableEnd="@drawable/ic_chevron_right_black_24dp"
             android:background="@android:color/transparent"/>
 

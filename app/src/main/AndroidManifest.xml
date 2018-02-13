@@ -64,10 +64,19 @@
         <activity
             android:name=".Activities.NewGroupActivity"
             android:theme="@style/AppThemeNoActionBar" />
-        <activity android:name=".Activities.GroupInvitationsActivity" />
+        <activity
+            android:name=".Activities.GroupInvitationsActivity"
+            android:theme="@style/AppThemeNoActionBar"/>
         <activity
             android:name=".Activities.GroupActivity"
-            android:theme="@style/AppThemeNoActionBar"/>
+            android:theme="@style/AppThemeNoActionBar" />
+        <activity
+            android:name=".Activities.InviteActivity"
+            android:theme="@style/AppThemeNoActionBar">
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/user_searchable"/>
+        </activity>
     </application>
 
 </manifest>
