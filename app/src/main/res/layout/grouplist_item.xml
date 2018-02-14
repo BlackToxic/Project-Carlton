@@ -19,9 +19,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/groupitem_name"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="-2dp"
+        android:paddingStart="2dp"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="@android:color/secondary_text_light"
+        android:textColor="#7f7f7f"
         />
 
 </RelativeLayout>

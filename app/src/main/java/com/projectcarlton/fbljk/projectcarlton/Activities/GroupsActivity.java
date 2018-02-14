@@ -16,6 +16,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
+import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallback;
+import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallbackType;
+import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallbacks;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
 import com.projectcarlton.fbljk.projectcarlton.API.Exception.APIException;
 import com.projectcarlton.fbljk.projectcarlton.API.Request.APIGetRequest;
@@ -29,11 +32,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class GroupsActivity extends AppCompatActivity implements APICallback {
+public class GroupsActivity extends AppCompatActivity implements APICallback, ActivityCallback {
 
     public static User currentUser;
     private ArrayList<Group> groups;
-    private static GroupAdapter adapter;
+    private GroupAdapter adapter;
 
     private LinearLayout progressBarLayout;
     private ListView groupListView;
@@ -43,6 +46,8 @@ public class GroupsActivity extends AppCompatActivity implements APICallback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groups);
 
+        ActivityCallbacks.registerActivityCallback(this, ActivityCallbackType.GROUPRELOAD_CALLBACK);
+
         Toolbar grouptoolbar = (Toolbar) findViewById(R.id.groups_toolbar);
         grouptoolbar.setTitle(R.string.groups_actionbar_title);
         setSupportActionBar(grouptoolbar);
@@ -51,7 +56,7 @@ public class GroupsActivity extends AppCompatActivity implements APICallback {
         groupListView.setVisibility(View.GONE);
 
         progressBarLayout = (LinearLayout) findViewById(R.id.groups_progressbar_layout);
-        progressBarLayout.setVisibility(View.VISIBLE);
+        progressBarLayout.setVisibility(View.GONE);
 
         if (getIntent() != null && getIntent().getExtras() != null) {
             currentUser = new User();
@@ -59,11 +64,15 @@ public class GroupsActivity extends AppCompatActivity implements APICallback {
             currentUser.userName = getIntent().getExtras().getString("UserName");
             currentUser.userPassword = getIntent().getExtras().getString("UserPassword");
 
-            // TODO: Make this pretty
-            String apiUrl = getString(R.string.API_URL) + "group?userid=" + currentUser.userId;
-            APIGetRequest request = new APIGetRequest(this, CallbackType.LOADINGGROUPS_CALLBACK, 5000);
-            request.execute(apiUrl);
+            loadGroups();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        ActivityCallbacks.deregisterActivityCallback(this, ActivityCallbackType.GROUPRELOAD_CALLBACK);
     }
 
     @Override
@@ -103,6 +112,14 @@ public class GroupsActivity extends AppCompatActivity implements APICallback {
     @Override
     public void onBackPressed() {
         // Leave this empty, as we won't allow pressing the back button while being logged in
+    }
+
+    public void loadGroups() {
+        progressBarLayout.setVisibility(View.VISIBLE);
+
+        String apiUrl = getString(R.string.API_URL) + "group?userid=" + currentUser.userId;
+        APIGetRequest request = new APIGetRequest(this, CallbackType.LOADINGGROUPS_CALLBACK, 5000);
+        request.execute(apiUrl);
     }
 
     @Override
@@ -159,6 +176,13 @@ public class GroupsActivity extends AppCompatActivity implements APICallback {
 
                 progressBarLayout.setVisibility(View.GONE);
             }
+        }
+    }
+
+    @Override
+    public void callback(int activityCallbackType, Object... options) {
+        if (activityCallbackType == ActivityCallbackType.GROUPRELOAD_CALLBACK) {
+            loadGroups();
         }
     }
 }
