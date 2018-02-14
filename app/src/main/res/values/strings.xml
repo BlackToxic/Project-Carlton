@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">ProjectCarlton</string>
 
-    <string name="API_URL">http://84.135.28.3/ProjectCarltonAPI/</string>
+    <string name="API_URL">api.candy-bouquet.de/</string>
 
     <string name="API_ERROR">Ups, da ist etwas schief gelaufen! Bitte versuch es noch einmal!</string>
 
