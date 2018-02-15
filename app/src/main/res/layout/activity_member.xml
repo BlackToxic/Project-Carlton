@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.projectcarlton.fbljk.projectcarlton.Activities.Moduls.MemberActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/member_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/member_progressbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="55dp">
+
+            <Button
+                android:id="@+id/member_invite_button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="@string/group_invitebutton_text"
+                android:textAllCaps="false"
+                android:textSize="15sp"
+                android:gravity="start|center_vertical"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:drawableEnd="@drawable/ic_chevron_right_black_24dp"
+                android:background="@android:color/transparent"/>
+
+            <View
+                android:id="@+id/member_spacer_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/member_invite_button"
+                android:background="@android:color/darker_gray"/>
+
+            <ListView
+                android:id="@+id/member_memberlist"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/member_invite_button"/>
+
+        </RelativeLayout>
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
