@@ -21,10 +21,10 @@
         android:layout_marginTop="55dp">
 
         <TextView
-            android:id="@+id/group_members_header"
+            android:id="@+id/group_organization_header"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:text="@string/group_membersheader_text"
+            android:text="@string/group_organizationheader_text"
             android:textSize="17sp"
             android:textColor="@android:color/black"
             android:textStyle="bold"
@@ -32,18 +32,18 @@
             android:paddingStart="20dp"/>
 
         <View
-            android:id="@+id/group_members_header_spacer_bottom"
+            android:id="@+id/group_organization_header_spacer_bottom"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_below="@id/group_members_header"
+            android:layout_below="@id/group_organization_header"
             android:background="@android:color/darker_gray"/>
 
         <Button
-            android:id="@+id/group_invite"
+            android:id="@+id/group_member_button"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_below="@id/group_members_header_spacer_bottom"
-            android:text="@string/group_invitebutton_text"
+            android:layout_below="@id/group_organization_header_spacer_bottom"
+            android:text="@string/group_memberbutton_text"
             android:textAllCaps="false"
             android:textSize="15sp"
             android:gravity="start|center_vertical"

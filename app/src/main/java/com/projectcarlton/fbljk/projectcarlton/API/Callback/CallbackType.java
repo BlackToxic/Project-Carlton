@@ -9,5 +9,7 @@ public class CallbackType {
     public static final int LOADINGINVITES_CALLBACK     = 0x5;
     public static final int ACCEPTINVITE_CALLBACK       = 0x6;
     public static final int REJECTINVITE_CALLBACK       = 0x7;
+    public static final int LOADUSERS_CALLBACK          = 0x8;
+    public static final int INVITEUSER_CALLBACK         = 0x9;
 
 }

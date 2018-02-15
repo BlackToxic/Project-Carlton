@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">ProjectCarlton</string>
 
-    <string name="API_URL">api.candy-bouquet.de/</string>
+    <string name="button_yes">Ja</string>
+    <string name="button_no">Nein</string>
+
+    <string name="API_URL">http://api.candy-bouquet.de/</string>
 
     <string name="API_ERROR">Ups, da ist etwas schief gelaufen! Bitte versuch es noch einmal!</string>
 
@@ -31,14 +34,20 @@
     <string name="newgroup_title">Neue Gruppe</string>
     <string name="newgroup_groupname_hint">Gruppenname</string>
     <string name="newgroup_groupdescription_hint">Gruppenbeschreibung</string>
+    <string name="newgroup_dialog_question">Wirklich erstellen?</string>
 
     <string name="newgroup_action_done_title">Fertig</string>
 
     <string name="groupinvitations_title">Einladungen</string>
 
+    <string name="group_organizationheader_text">Verwaltung</string>
     <string name="group_invitebutton_text">Einladen</string>
-    <string name="group_membersheader_text">Mitglieder</string>
+    <string name="group_memberbutton_text">Mitglieder</string>
 
     <string name="invite_title">Benutzer</string>
+
+    <string name="inviteusers_alreadyinvited_text">Eingeladen</string>
+
+    <string name="memberlistitem_deletebutton_text">Entfernen</string>
 
 </resources>
