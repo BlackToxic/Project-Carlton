@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 
+import com.projectcarlton.fbljk.projectcarlton.Activities.Moduls.MemberActivity;
 import com.projectcarlton.fbljk.projectcarlton.Data.Group;
 import com.projectcarlton.fbljk.projectcarlton.R;
 
@@ -14,7 +15,7 @@ public class GroupActivity extends AppCompatActivity {
 
     public static Group currentGroup;
 
-    private Button inviteButton;
+    private Button memberButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,21 +34,17 @@ public class GroupActivity extends AppCompatActivity {
             setSupportActionBar(grouptoolbar);
         }
 
-        inviteButton = findViewById(R.id.group_invite);
-        inviteButton.setOnClickListener(new View.OnClickListener() {
+        memberButton = (Button) findViewById(R.id.group_member_button);
+        memberButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(GroupActivity.this, InviteActivity.class);
+                Intent intent = new Intent(GroupActivity.this, MemberActivity.class);
                 startActivity(intent);
             }
         });
-
-        if (!isUserAdmin()) {
-            inviteButton.setVisibility(View.GONE);
-        }
     }
 
-    private boolean isUserAdmin() {
+    public static boolean isUserAdmin() {
         if (GroupsActivity.currentUser != null && GroupActivity.currentGroup != null) {
             if (GroupActivity.currentGroup.groupAdmin.equals(GroupsActivity.currentUser.userId)) {
                 return true;

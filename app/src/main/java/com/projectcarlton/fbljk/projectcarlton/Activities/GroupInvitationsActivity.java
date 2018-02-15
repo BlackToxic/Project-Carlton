@@ -22,7 +22,7 @@ import java.util.ArrayList;
 public class GroupInvitationsActivity extends AppCompatActivity implements APICallback {
 
     private ArrayList<Invite> invites;
-    private static GroupInvitesAdapter adapter;
+    private GroupInvitesAdapter adapter;
 
     private LinearLayout progressBarLayout;
     private ListView invitesListView;

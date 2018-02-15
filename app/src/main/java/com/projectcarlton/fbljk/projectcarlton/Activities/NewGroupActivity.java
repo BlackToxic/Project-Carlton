@@ -1,5 +1,7 @@
 package com.projectcarlton.fbljk.projectcarlton.Activities;
 
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -11,6 +13,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
+import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallback;
+import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallbackType;
+import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallbacks;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
 import com.projectcarlton.fbljk.projectcarlton.API.Request.APIGetRequest;
 import com.projectcarlton.fbljk.projectcarlton.Data.User;
@@ -48,15 +53,23 @@ public class NewGroupActivity extends AppCompatActivity implements APICallback {
         switch (item.getItemId()) {
             case R.id.newgroup_action_done:
 
-                String groupName = groupname.getText().toString();
-                String groupDesc = groupdesc.getText().toString();
+                final DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        switch (i) {
+                            case DialogInterface.BUTTON_POSITIVE:
+                                saveGroup();
 
-                if (!groupName.equals("") && !groupDesc.equals("")) {
-                    String apiUrl = getString(R.string.API_URL) + "group?userid=" + GroupsActivity.currentUser.userId + "&groupname=" + groupName + "&groupdescription=" + groupDesc;
-                    APIGetRequest request = new APIGetRequest(this, CallbackType.CREATEGROUP_CALLBACK, 5000);
-                    progressBarLayout.setVisibility(View.VISIBLE);
-                    request.execute(apiUrl);
-                }
+                                break;
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(R.string.newgroup_dialog_question).setPositiveButton(R.string.button_yes, dialogClickListener).setNegativeButton(R.string.button_no, dialogClickListener);
+                builder.create().show();
 
                 return true;
 
@@ -65,11 +78,23 @@ public class NewGroupActivity extends AppCompatActivity implements APICallback {
         }
     }
 
+    private void saveGroup() {
+        String groupName = groupname.getText().toString();
+        String groupDesc = groupdesc.getText().toString();
+
+        if (!groupName.equals("") && !groupDesc.equals("")) {
+            String apiUrl = getString(R.string.API_URL) + "group?userid=" + GroupsActivity.currentUser.userId + "&groupname=" + groupName + "&groupdescription=" + groupDesc;
+            APIGetRequest request = new APIGetRequest(this, CallbackType.CREATEGROUP_CALLBACK, 5000);
+            progressBarLayout.setVisibility(View.VISIBLE);
+            request.execute(apiUrl);
+        }
+    }
+
     @Override
     public void callback(int callbackType, String resultString) {
         if (callbackType == CallbackType.CREATEGROUP_CALLBACK) {
             if (resultString != null && !resultString.equals("")) {
-                // TODO: Go back to GroupActivity and reload
+                ActivityCallbacks.request(ActivityCallbackType.GROUPRELOAD_CALLBACK);
                 onBackPressed();
             }
 
