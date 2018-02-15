@@ -43,11 +43,17 @@
     <string name="group_organizationheader_text">Verwaltung</string>
     <string name="group_invitebutton_text">Einladen</string>
     <string name="group_memberbutton_text">Mitglieder</string>
+    <string name="group_personalheader_text">Persönlich</string>
+    <string name="group_deletebutton_text">Gruppe löschen</string>
+    <string name="group_leavebutton_text">Gruppe verlassen</string>
 
     <string name="invite_title">Benutzer</string>
 
     <string name="inviteusers_alreadyinvited_text">Eingeladen</string>
 
     <string name="memberlistitem_deletebutton_text">Entfernen</string>
+
+    <string name="leavegroup_dialog_message">Gruppe wirklich verlassen?</string>
+    <string name="deletegroup_dialog_message">Gruppe wirklich löschen?</string>
 
 </resources>
