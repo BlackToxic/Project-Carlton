@@ -52,6 +52,62 @@
             android:drawableEnd="@drawable/ic_chevron_right_black_24dp"
             android:background="@android:color/transparent"/>
 
+        <Button
+            android:id="@+id/group_delete_button"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@id/group_member_button"
+            android:text="@string/group_deletebutton_text"
+            android:textAllCaps="false"
+            android:textSize="15sp"
+            android:textColor="@android:color/holo_red_light"
+            android:gravity="start|center_vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:drawableEnd="@drawable/ic_chevron_right_black_24dp"
+            android:background="@android:color/transparent"/>
+
+        <View
+            android:id="@+id/group_personal_header_spacer_top"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/group_delete_button"
+            android:background="@android:color/darker_gray"/>
+
+        <TextView
+            android:id="@+id/group_personal_header"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="@string/group_personalheader_text"
+            android:textSize="17sp"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:gravity="start|center_vertical"
+            android:layout_below="@id/group_personal_header_spacer_top"
+            android:paddingStart="20dp"/>
+
+        <View
+            android:id="@+id/group_personal_header_spacer_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/group_personal_header"
+            android:background="@android:color/darker_gray"/>
+
+        <Button
+            android:id="@+id/group_leave_button"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@id/group_personal_header_spacer_bottom"
+            android:text="@string/group_leavebutton_text"
+            android:textAllCaps="false"
+            android:textSize="15sp"
+            android:textColor="@android:color/holo_red_light"
+            android:gravity="start|center_vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:drawableEnd="@drawable/ic_chevron_right_black_24dp"
+            android:background="@android:color/transparent"/>
+
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>

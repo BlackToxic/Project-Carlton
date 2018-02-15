@@ -11,5 +11,7 @@ public class CallbackType {
     public static final int REJECTINVITE_CALLBACK       = 0x7;
     public static final int LOADUSERS_CALLBACK          = 0x8;
     public static final int INVITEUSER_CALLBACK         = 0x9;
+    public static final int LEAVEGROUP_CALLBACK         = 0x10;
+    public static final int DELETEGROUP_CALLBACK        = 0x11;
 
 }
