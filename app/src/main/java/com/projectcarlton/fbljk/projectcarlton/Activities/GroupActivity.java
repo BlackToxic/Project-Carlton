@@ -106,13 +106,13 @@ public class GroupActivity extends AppCompatActivity implements APICallback {
     }
 
     private void leaveGroup() {
-        String apiUrl = getString(R.string.API_URL) + "group?userid=" + GroupsActivity.currentUser.userId + "&groupname=" + groupName + "&groupdescription=" + groupDesc;
+        String apiUrl = getString(R.string.API_URL) + "group?leave=1&groupid=" + currentGroup.groupId + "&userid=" + GroupsActivity.currentUser.userId;
         APIGetRequest request = new APIGetRequest(this, CallbackType.LEAVEGROUP_CALLBACK, 5000);
         request.execute(apiUrl);
     }
 
     private void deleteGroup() {
-        String apiUrl = getString(R.string.API_URL) + "group?userid=" + GroupsActivity.currentUser.userId + "&groupname=" + groupName + "&groupdescription=" + groupDesc;
+        String apiUrl = getString(R.string.API_URL) + "group?delete=1&groupid=" + currentGroup.groupId;
         APIGetRequest request = new APIGetRequest(this, CallbackType.DELETEGROUP_CALLBACK, 5000);
         request.execute(apiUrl);
     }
