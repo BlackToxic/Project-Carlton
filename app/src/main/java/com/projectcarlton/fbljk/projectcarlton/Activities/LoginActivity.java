@@ -2,10 +2,15 @@ package com.projectcarlton.fbljk.projectcarlton.Activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.transition.Explode;
+import android.transition.Fade;
 import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -32,68 +37,52 @@ public class LoginActivity extends AppCompatActivity implements APICallback {
     private EditText userNameTextbox;
     private EditText passwordTextbox;
     private Button loginButton;
-    private TextView registerButton;
+    private TextView forgotButton;
+    private ConstraintLayout generalLayout;
     private LinearLayout progressBarLayout;
-    private RelativeLayout generalLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        getWindow().setEnterTransition(new Explode());
+        getWindow().setExitTransition(new Explode());
+
         setContentView(R.layout.activity_login);
 
+        userNameTextbox = (EditText) findViewById(R.id.login_usernameTxt);
+        passwordTextbox = (EditText) findViewById(R.id.login_passwordTxt);
+        loginButton = (Button) findViewById(R.id.login_loginButton);
+        forgotButton = (TextView) findViewById(R.id.login_forgotButton);
         progressBarLayout = (LinearLayout) findViewById(R.id.login_progressbar_layout);
-        generalLayout = (RelativeLayout) findViewById(R.id.login_general_layout);
+        generalLayout = (ConstraintLayout) findViewById(R.id.login_generallayout);
 
-        checkForLoginData();
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String username = userNameTextbox.getText().toString();
+                String password = passwordTextbox.getText().toString();
 
-        userNameTextbox = (EditText) findViewById(R.id.login_username);
-        passwordTextbox = (EditText) findViewById(R.id.login_password);
-        loginButton = (Button) findViewById(R.id.login_loginbutton);
-        registerButton = (TextView) findViewById(R.id.login_registerbutton);
-
-        if (loginButton != null) {
-            loginButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String username = userNameTextbox.getText().toString();
-                    String password = passwordTextbox.getText().toString();
-
-                    if (!username.equals("") && !password.equals("")) {
-                        login(username, password, false);
-                    }
+                if (!username.equals("") && !password.equals("")) {
+                    login(username, password);
                 }
-            });
-        }
+            }
+        });
 
-        if (registerButton != null) {
-            registerButton.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                    startActivity(intent);
-                }
-            });
-        }
+        forgotButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
     }
 
-    private void checkForLoginData() {
-        SharedPreferences pref = getSharedPreferences("PROJECTCARLTON_PREF", MODE_PRIVATE);
-        String username = pref.getString("UserName", null);
-        String password = pref.getString("UserPassword", null);
-
-        if (username != null && password != null){
-            login(username, password, true);
-        }
-    }
-
-    private void login(String username, String password, boolean passwordAlreadyHashed) {
-        generalLayout.setVisibility(View.GONE);
+    private void login(String username, String password) {
         progressBarLayout.setVisibility(View.VISIBLE);
+        generalLayout.setVisibility(View.INVISIBLE);
 
-        String hashedPassword = null;
-        if (!passwordAlreadyHashed)
-            hashedPassword = PasswordHelper.createMD5(password);
-        else
-            hashedPassword = password;
+        String hashedPassword = PasswordHelper.createMD5(password);
 
         APILoginGetRequest request = new APILoginGetRequest(this, CallbackType.LOGIN_CALLBACK, 1000, getApplicationContext());
         request.execute(getString(R.string.API_URL), username, hashedPassword);
@@ -149,9 +138,9 @@ public class LoginActivity extends AppCompatActivity implements APICallback {
                 toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
                 toast.show();
             }
-
-            progressBarLayout.setVisibility(View.GONE);
-            generalLayout.setVisibility(View.VISIBLE);
         }
+
+        progressBarLayout.setVisibility(View.INVISIBLE);
+        generalLayout.setVisibility(View.VISIBLE);
     }
 }
