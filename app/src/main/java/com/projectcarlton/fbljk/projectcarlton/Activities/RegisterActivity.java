@@ -1,11 +1,16 @@
 package com.projectcarlton.fbljk.projectcarlton.Activities;
 
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.transition.Explode;
+import android.transition.Fade;
 import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
@@ -26,34 +31,43 @@ public class RegisterActivity extends AppCompatActivity implements APICallback {
     private EditText usernameTextbox;
     private EditText passwordTextbox;
     private Button registerButton;
+    private ConstraintLayout generalLayout;
+    private LinearLayout progressBarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        getWindow().setEnterTransition(new Explode());
+        getWindow().setExitTransition(new Explode());
+
         setContentView(R.layout.activity_register);
 
-        emailTextbox = (EditText) findViewById(R.id.register_email);
-        usernameTextbox = (EditText) findViewById(R.id.register_username);
-        passwordTextbox = (EditText) findViewById(R.id.register_password);
-        registerButton = (Button) findViewById(R.id.register_registerbutton);
+        emailTextbox = (EditText) findViewById(R.id.register_emailTxt);
+        usernameTextbox = (EditText) findViewById(R.id.register_usernameTxt);
+        passwordTextbox = (EditText) findViewById(R.id.register_passwordTxt);
+        registerButton = (Button) findViewById(R.id.register_registerButton);
+        progressBarLayout = (LinearLayout) findViewById(R.id.register_progressbar_layout);
+        generalLayout = (ConstraintLayout) findViewById(R.id.register_generallayout);
 
-        if (registerButton != null) {
-            registerButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String email = emailTextbox.getText().toString();
-                    String username = usernameTextbox.getText().toString();
-                    String password = passwordTextbox.getText().toString();
-
-                    if (!email.equals("") && !username.equals("") && !password.equals("")) {
-                        register(email, username, password);
-                    }
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String email = emailTextbox.getText().toString();
+                String username = usernameTextbox.getText().toString();
+                String password = passwordTextbox.getText().toString();
+                if (!email.equals("") && !username.equals("") && !password.equals("")) {
+                    register(email, username, password);
                 }
-            });
-        }
+            }
+        });
     }
 
     private void register(String email, String username, String password) {
+        progressBarLayout.setVisibility(View.VISIBLE);
+        generalLayout.setVisibility(View.INVISIBLE);
+
         String hashedPassword = PasswordHelper.createMD5(password);
 
         String apiUrl = getString(R.string.API_URL) + "user?register=1&email=" + email + "&username=" + username + "&password=" + hashedPassword;
@@ -102,5 +116,8 @@ public class RegisterActivity extends AppCompatActivity implements APICallback {
                 }
             }
         }
+
+        progressBarLayout.setVisibility(View.INVISIBLE);
+        generalLayout.setVisibility(View.VISIBLE);
     }
 }
