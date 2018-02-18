@@ -1,8 +1,11 @@
 package com.projectcarlton.fbljk.projectcarlton.Activities.Core;
 
 import android.content.Intent;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,10 +35,11 @@ public class GroupsActivity extends AppCompatActivity implements APICallback, Ac
 
     public static User currentUser;
     private ArrayList<Group> groups;
-    private GroupAdapter adapter;
 
-    private LinearLayout progressBarLayout;
-    private ListView groupListView;
+    private SwipeRefreshLayout refreshLayout;
+    private RecyclerView groupListView;
+    private RecyclerView.Adapter adapter;
+    private RecyclerView.LayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,16 +47,25 @@ public class GroupsActivity extends AppCompatActivity implements APICallback, Ac
         setContentView(R.layout.activity_groups);
 
         ActivityCallbacks.registerActivityCallback(this, ActivityCallbackType.GROUPRELOAD_CALLBACK);
+        ActivityCallbacks.registerActivityCallback(this, ActivityCallbackType.GROUPOPEN_CALLBACK);
 
         Toolbar grouptoolbar = (Toolbar) findViewById(R.id.groups_toolbar);
         grouptoolbar.setTitle(R.string.groups_actionbar_title);
         setSupportActionBar(grouptoolbar);
 
-        groupListView = (ListView) findViewById(R.id.groups_grouplist);
-        groupListView.setVisibility(View.GONE);
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.groups_refreshlayout);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadGroups();
+            }
+        });
 
-        progressBarLayout = (LinearLayout) findViewById(R.id.groups_progressbar_layout);
-        progressBarLayout.setVisibility(View.GONE);
+        groupListView = (RecyclerView) findViewById(R.id.groups_grouplist);
+        groupListView.setHasFixedSize(true);
+
+        layoutManager = new LinearLayoutManager(this);
+        groupListView.setLayoutManager(layoutManager);
 
         if (getIntent() != null && getIntent().getExtras() != null) {
             currentUser = new User();
@@ -69,6 +82,7 @@ public class GroupsActivity extends AppCompatActivity implements APICallback, Ac
         super.onDestroy();
 
         ActivityCallbacks.deregisterActivityCallback(this, ActivityCallbackType.GROUPRELOAD_CALLBACK);
+        ActivityCallbacks.deregisterActivityCallback(this, ActivityCallbackType.GROUPOPEN_CALLBACK);
     }
 
     @Override
@@ -111,11 +125,21 @@ public class GroupsActivity extends AppCompatActivity implements APICallback, Ac
     }
 
     public void loadGroups() {
-        progressBarLayout.setVisibility(View.VISIBLE);
-
+        refreshLayout.setRefreshing(true);
         String apiUrl = getString(R.string.API_URL) + "group?userid=" + currentUser.userId;
         APIGetRequest request = new APIGetRequest(this, CallbackType.LOADINGGROUPS_CALLBACK, 5000);
         request.execute(apiUrl);
+    }
+
+    public void openGroup(Group group) {
+        Intent group_intent = new Intent(GroupsActivity.this, GroupActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("GroupId", group.groupId);
+        bundle.putString("GroupName", group.groupName);
+        bundle.putString("GroupDescription", group.groupDescription);
+        bundle.putString("GroupAdmin", group.groupAdmin);
+        group_intent.putExtras(bundle);
+        startActivity(group_intent);
     }
 
     @Override
@@ -138,26 +162,8 @@ public class GroupsActivity extends AppCompatActivity implements APICallback, Ac
                             groups.add(newGroup);
                         }
 
-                        adapter = new GroupAdapter(groups, getApplicationContext());
+                        adapter = new GroupAdapter(groups);
                         groupListView.setAdapter(adapter);
-                        groupListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                                Group group = groups.get(position);
-
-                                Intent group_intent = new Intent(GroupsActivity.this, GroupActivity.class);
-                                Bundle bundle = new Bundle();
-                                bundle.putString("GroupId", group.groupId);
-                                bundle.putString("GroupName", group.groupName);
-                                bundle.putString("GroupDescription", group.groupDescription);
-                                bundle.putString("GroupAdmin", group.groupAdmin);
-                                group_intent.putExtras(bundle);
-                                startActivity(group_intent);
-
-                            }
-                        });
-                        groupListView.setVisibility(View.VISIBLE);
                     } else {
                         JSONObject resultObject = new JSONObject(resultString);
 
@@ -169,16 +175,20 @@ public class GroupsActivity extends AppCompatActivity implements APICallback, Ac
                 } catch (Exception ex) {
 
                 }
-
-                progressBarLayout.setVisibility(View.GONE);
             }
         }
+
+        refreshLayout.setRefreshing(false);
     }
 
     @Override
     public void callback(int activityCallbackType, Object... options) {
         if (activityCallbackType == ActivityCallbackType.GROUPRELOAD_CALLBACK) {
             loadGroups();
+        } else if (activityCallbackType == ActivityCallbackType.GROUPOPEN_CALLBACK) {
+            if (options != null && options[0] != null && options[0] instanceof Group) {
+                openGroup((Group)options[0]);
+            }
         }
     }
 }
