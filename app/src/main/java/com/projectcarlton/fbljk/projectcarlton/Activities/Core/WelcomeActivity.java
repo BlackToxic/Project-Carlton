@@ -8,23 +8,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.transition.Explode;
 import android.transition.Fade;
-import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
-import com.projectcarlton.fbljk.projectcarlton.API.Exception.APIException;
 import com.projectcarlton.fbljk.projectcarlton.API.Request.APILoginGetRequest;
-import com.projectcarlton.fbljk.projectcarlton.Activities.GroupsActivity;
-import com.projectcarlton.fbljk.projectcarlton.Activities.LoginActivity;
-import com.projectcarlton.fbljk.projectcarlton.Activities.RegisterActivity;
 import com.projectcarlton.fbljk.projectcarlton.Data.User;
-import com.projectcarlton.fbljk.projectcarlton.Helpers.PasswordHelper;
 import com.projectcarlton.fbljk.projectcarlton.R;
 
 import org.json.JSONException;
