@@ -15,7 +15,7 @@ import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.Ac
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallbacks;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
 import com.projectcarlton.fbljk.projectcarlton.API.Request.APIGetRequest;
-import com.projectcarlton.fbljk.projectcarlton.Activities.GroupsActivity;
+import com.projectcarlton.fbljk.projectcarlton.Activities.Core.GroupsActivity;
 import com.projectcarlton.fbljk.projectcarlton.Data.Invite;
 import com.projectcarlton.fbljk.projectcarlton.R;
 

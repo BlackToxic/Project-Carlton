@@ -2,7 +2,6 @@ package com.projectcarlton.fbljk.projectcarlton.Adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +14,8 @@ import android.widget.TextView;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
 import com.projectcarlton.fbljk.projectcarlton.API.Request.APIGetRequest;
-import com.projectcarlton.fbljk.projectcarlton.Activities.GroupActivity;
-import com.projectcarlton.fbljk.projectcarlton.Activities.GroupsActivity;
+import com.projectcarlton.fbljk.projectcarlton.Activities.Core.GroupActivity;
+import com.projectcarlton.fbljk.projectcarlton.Activities.Core.GroupsActivity;
 import com.projectcarlton.fbljk.projectcarlton.Data.User;
 import com.projectcarlton.fbljk.projectcarlton.R;
 
