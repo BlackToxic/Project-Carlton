@@ -32,7 +32,7 @@ public class GcmIntentService extends GcmListenerService {
 
         String message = data.getString("message");
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, channelId)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("Test")
                 .setContentText(message);
         notificationManager.notify(1, mBuilder.build());

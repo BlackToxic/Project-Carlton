@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.projectcarlton.fbljk.projectcarlton.Activities.InviteActivity">
+    tools:context="com.projectcarlton.fbljk.projectcarlton.Activities.Core.InviteActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/invite_toolbar"
