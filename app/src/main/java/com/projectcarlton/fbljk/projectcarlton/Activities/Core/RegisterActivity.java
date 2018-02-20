@@ -82,11 +82,11 @@ public class RegisterActivity extends AppCompatActivity implements APICallback {
     }
 
     @Override
-    public void callback(int callbackType, String resultString) {
+    public void callback(int callbackType, Object resultString) {
         if (callbackType == CallbackType.REGISTER_CALLBACK) {
             if (resultString != null && !resultString.equals("")) {
                 try {
-                    JSONObject resultObject = new JSONObject(resultString);
+                    JSONObject resultObject = new JSONObject((String)resultString);
 
                     if (resultObject.has("code")) {
                         int errorCode = resultObject.getInt("code");

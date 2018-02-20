@@ -99,7 +99,7 @@ public class InviteActivity extends AppCompatActivity implements SearchView.OnQu
     }
 
     @Override
-    public void callback(int callbackType, String resultString) {
+    public void callback(int callbackType, Object resultString) {
         if (callbackType == CallbackType.LOADUSERS_CALLBACK) {
             users = new ArrayList<User>();
             if (adapter != null)
@@ -107,8 +107,8 @@ public class InviteActivity extends AppCompatActivity implements SearchView.OnQu
 
             if (resultString != null && !resultString.equals("") && !resultString.equals("null")) {
                 try {
-                    if (resultString.contains("id")) {
-                        JSONArray array = new JSONArray(resultString);
+                    if (((String)resultString).contains("id")) {
+                        JSONArray array = new JSONArray((String)resultString);
                         for (int i = 0; i < array.length(); i++) {
                             JSONObject childObject = array.getJSONObject(i);
 
@@ -122,7 +122,7 @@ public class InviteActivity extends AppCompatActivity implements SearchView.OnQu
                         userListView.setAdapter(adapter);
                         userListView.setVisibility(View.VISIBLE);
                     } else {
-                        JSONObject resultObject = new JSONObject(resultString);
+                        JSONObject resultObject = new JSONObject((String)resultString);
 
                         if (resultObject.has("code")) {
                             int errorCode = resultObject.getInt("code");

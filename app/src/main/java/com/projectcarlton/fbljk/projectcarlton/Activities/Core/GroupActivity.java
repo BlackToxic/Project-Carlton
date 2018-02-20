@@ -128,7 +128,7 @@ public class GroupActivity extends AppCompatActivity implements APICallback {
     }
 
     @Override
-    public void callback(int callbackType, String resultString) {
+    public void callback(int callbackType, Object resultString) {
         if (callbackType == CallbackType.LEAVEGROUP_CALLBACK) {
             if (resultString != null && !resultString.equals("") && !resultString.equals("null")) {
                 if (resultString.equals("1")) {
