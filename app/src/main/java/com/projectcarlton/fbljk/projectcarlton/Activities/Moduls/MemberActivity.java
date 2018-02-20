@@ -75,14 +75,14 @@ public class MemberActivity extends AppCompatActivity implements APICallback {
     }
 
     @Override
-    public void callback(int callbackType, String resultString) {
+    public void callback(int callbackType, Object resultString) {
         if (callbackType == CallbackType.LOADUSERS_CALLBACK) {
             if (resultString != null && !resultString.equals("")) {
                 try {
-                    if (resultString.contains("id")) {
+                    if (((String)resultString).contains("id")) {
                         users = new ArrayList<User>();
 
-                        JSONArray array = new JSONArray(resultString);
+                        JSONArray array = new JSONArray((String)resultString);
                         for (int i = 0; i < array.length(); i++) {
                             JSONObject childObject = array.getJSONObject(i);
 
@@ -105,7 +105,7 @@ public class MemberActivity extends AppCompatActivity implements APICallback {
                         });
                         memberList.setVisibility(View.VISIBLE);
                     } else {
-                        JSONObject resultObject = new JSONObject(resultString);
+                        JSONObject resultObject = new JSONObject((String)resultString);
 
                         if (resultObject.has("code")) {
                             int errorCode = resultObject.getInt("code");

@@ -47,6 +47,9 @@ public class WelcomeActivity extends AppCompatActivity implements APICallback {
 
         checkForLoginData();
 
+        //progressBarLayout.setVisibility(View.INVISIBLE);
+        //generalLayout.setVisibility(View.VISIBLE);
+
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -84,11 +87,11 @@ public class WelcomeActivity extends AppCompatActivity implements APICallback {
     }
 
     @Override
-    public void callback(int callbackType, String resultString) {
+    public void callback(int callbackType, Object resultString) {
         if (callbackType == CallbackType.LOGIN_CALLBACK) {
             if (resultString != null && !resultString.equals("")) {
                 try {
-                    JSONObject resultObject = new JSONObject(resultString);
+                    JSONObject resultObject = new JSONObject((String)resultString);
 
                     if (resultObject.has("code")) {
 

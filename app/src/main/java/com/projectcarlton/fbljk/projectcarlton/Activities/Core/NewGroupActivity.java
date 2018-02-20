@@ -89,7 +89,7 @@ public class NewGroupActivity extends AppCompatActivity implements APICallback {
     }
 
     @Override
-    public void callback(int callbackType, String resultString) {
+    public void callback(int callbackType, Object resultString) {
         if (callbackType == CallbackType.CREATEGROUP_CALLBACK) {
             if (resultString != null && !resultString.equals("")) {
                 ActivityCallbacks.request(ActivityCallbackType.GROUPRELOAD_CALLBACK);

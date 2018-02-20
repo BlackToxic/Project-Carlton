@@ -111,7 +111,7 @@ public class GroupInvitesAdapter extends ArrayAdapter<Invite> implements View.On
     }
 
     @Override
-    public void callback(int callbackType, String resultString) {
+    public void callback(int callbackType, Object resultString) {
         if (callbackType == CallbackType.ACCEPTINVITE_CALLBACK) {
             ActivityCallbacks.request(ActivityCallbackType.GROUPRELOAD_CALLBACK);
         } else if (callbackType == CallbackType.REJECTINVITE_CALLBACK) {
