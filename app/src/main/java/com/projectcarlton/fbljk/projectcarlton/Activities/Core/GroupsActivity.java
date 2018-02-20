@@ -143,14 +143,14 @@ public class GroupsActivity extends AppCompatActivity implements APICallback, Ac
     }
 
     @Override
-    public void callback(int callbackType, String resultString) {
+    public void callback(int callbackType, Object resultString) {
         if (callbackType == CallbackType.LOADINGGROUPS_CALLBACK) {
             if (resultString != null && !resultString.equals("")) {
                 try {
-                    if (resultString.contains("groupid")) {
+                    if (((String)resultString).contains("groupid")) {
                         groups = new ArrayList<Group>();
 
-                        JSONArray array = new JSONArray(resultString);
+                        JSONArray array = new JSONArray((String)resultString);
                         for (int i = 0; i < array.length(); i++) {
                             JSONObject childObject = array.getJSONObject(i);
 
@@ -159,13 +159,14 @@ public class GroupsActivity extends AppCompatActivity implements APICallback, Ac
                             newGroup.groupName = childObject.getString("groupname");
                             newGroup.groupDescription = childObject.getString("groupdescription");
                             newGroup.groupAdmin = childObject.getString("groupadmin");
+                            newGroup.groupPhoto = childObject.getString("groupphoto");
                             groups.add(newGroup);
                         }
 
                         adapter = new GroupAdapter(groups);
                         groupListView.setAdapter(adapter);
                     } else {
-                        JSONObject resultObject = new JSONObject(resultString);
+                        JSONObject resultObject = new JSONObject((String)resultString);
 
                         if (resultObject.has("code")) {
                             int errorCode = resultObject.getInt("code");

@@ -50,14 +50,14 @@ public class GroupInvitationsActivity extends AppCompatActivity implements APICa
     }
 
     @Override
-    public void callback(int callbackType, String resultString) {
+    public void callback(int callbackType, Object resultString) {
         if (callbackType == CallbackType.LOADINGINVITES_CALLBACK) {
             if (resultString != null && !resultString.equals("")) {
                 try {
-                    if (resultString.contains("id")) {
+                    if (((String)resultString).contains("id")) {
                         invites = new ArrayList<Invite>();
 
-                        JSONArray array = new JSONArray(resultString);
+                        JSONArray array = new JSONArray((String)resultString);
                         for (int i = 0; i < array.length(); i++) {
                             JSONObject childObject = array.getJSONObject(i);
 
@@ -72,7 +72,7 @@ public class GroupInvitationsActivity extends AppCompatActivity implements APICa
                         invitesListView.setAdapter(adapter);
                         invitesListView.setVisibility(View.VISIBLE);
                     } else {
-                        JSONObject resultObject = new JSONObject(resultString);
+                        JSONObject resultObject = new JSONObject((String)resultString);
 
                         if (resultObject.has("code")) {
                             int errorCode = resultObject.getInt("code");

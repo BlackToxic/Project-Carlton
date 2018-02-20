@@ -95,7 +95,7 @@ public class InviteUsersAdapter extends ArrayAdapter<User> implements View.OnCli
     }
 
     @Override
-    public void callback(int callbackType, String resultString) {
+    public void callback(int callbackType, Object resultString) {
         if (callbackType == CallbackType.INVITEUSER_CALLBACK) {
 
         }
