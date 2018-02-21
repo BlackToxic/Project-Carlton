@@ -1,6 +1,7 @@
 package com.projectcarlton.fbljk.projectcarlton.Activities.Core;
 
 import android.content.Intent;
+import android.provider.ContactsContract;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -110,7 +111,8 @@ public class GroupsActivity extends AppCompatActivity implements APICallback, Ac
 
             case R.id.groups_action_profile:
 
-
+                Intent profile_intent = new Intent(this, ProfileActivity.class);
+                startActivity(profile_intent);
 
                 return true;
 
