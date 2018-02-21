@@ -11,9 +11,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
+import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallbackType;
+import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallbacks;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
 import com.projectcarlton.fbljk.projectcarlton.API.Request.APIGetRequest;
-import com.projectcarlton.fbljk.projectcarlton.Activities.GroupsActivity;
+import com.projectcarlton.fbljk.projectcarlton.Activities.Core.GroupsActivity;
 import com.projectcarlton.fbljk.projectcarlton.Data.Invite;
 import com.projectcarlton.fbljk.projectcarlton.R;
 
@@ -91,7 +93,7 @@ public class GroupInvitesAdapter extends ArrayAdapter<Invite> implements View.On
                 request = new APIGetRequest(this, CallbackType.ACCEPTINVITE_CALLBACK, 5000);
                 request.execute(apiUrl);
 
-                viewHolder.uncheckButton.setVisibility(View.GONE);
+                viewHolder.uncheckButton.setVisibility(View.INVISIBLE);
                 viewHolder.checkButton.setEnabled(false);
 
                 break;
@@ -101,7 +103,7 @@ public class GroupInvitesAdapter extends ArrayAdapter<Invite> implements View.On
                 request = new APIGetRequest(this, CallbackType.REJECTINVITE_CALLBACK, 5000);
                 request.execute(apiUrl);
 
-                viewHolder.checkButton.setVisibility(View.GONE);
+                viewHolder.checkButton.setVisibility(View.INVISIBLE);
                 viewHolder.uncheckButton.setEnabled(false);
 
                 break;
@@ -109,9 +111,9 @@ public class GroupInvitesAdapter extends ArrayAdapter<Invite> implements View.On
     }
 
     @Override
-    public void callback(int callbackType, String resultString) {
+    public void callback(int callbackType, Object resultString) {
         if (callbackType == CallbackType.ACCEPTINVITE_CALLBACK) {
-
+            ActivityCallbacks.request(ActivityCallbackType.GROUPRELOAD_CALLBACK);
         } else if (callbackType == CallbackType.REJECTINVITE_CALLBACK) {
 
         }
