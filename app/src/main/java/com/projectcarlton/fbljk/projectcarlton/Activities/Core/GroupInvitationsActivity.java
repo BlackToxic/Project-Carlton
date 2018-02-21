@@ -10,6 +10,7 @@ import android.widget.ListView;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.APIUtilCallback.APIUtilCallback;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
 import com.projectcarlton.fbljk.projectcarlton.Adapter.GroupInvitesAdapter;
+import com.projectcarlton.fbljk.projectcarlton.Cache.SettingsCache;
 import com.projectcarlton.fbljk.projectcarlton.Data.Invite;
 import com.projectcarlton.fbljk.projectcarlton.Helpers.APIUtil;
 import com.projectcarlton.fbljk.projectcarlton.R;
@@ -42,8 +43,8 @@ public class GroupInvitationsActivity extends AppCompatActivity implements APIUt
         progressBarLayout = (LinearLayout) findViewById(R.id.groupinvites_progressbar_layout);
         progressBarLayout.setVisibility(View.VISIBLE);
 
-        if (GroupsActivity.currentUser != null) {
-            apiUtil.loadInvitesAsync(GroupsActivity.currentUser.userId);
+        if (SettingsCache.CURRENTUSER != null) {
+            apiUtil.loadInvitesAsync(SettingsCache.CURRENTUSER.userId);
         }
     }
 

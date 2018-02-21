@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.APIUtilCallback.APIUtilCallback;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
 import com.projectcarlton.fbljk.projectcarlton.Adapter.InviteUsersAdapter;
+import com.projectcarlton.fbljk.projectcarlton.Cache.SettingsCache;
 import com.projectcarlton.fbljk.projectcarlton.Data.User;
 import com.projectcarlton.fbljk.projectcarlton.Helpers.APIUtil;
 import com.projectcarlton.fbljk.projectcarlton.R;
@@ -93,7 +94,7 @@ public class InviteActivity extends AppCompatActivity implements SearchView.OnQu
     private void searchUsers(String userName) {
         progressBarLayout.setVisibility(View.VISIBLE);
 
-        apiUtil.searchUsersAsync(userName, GroupActivity.currentGroup.groupId);
+        apiUtil.searchUsersAsync(userName, SettingsCache.CURRENTGROUP.groupId);
     }
 
     @Override
