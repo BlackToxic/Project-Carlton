@@ -77,8 +77,6 @@ public class MemberAdapter extends ArrayAdapter<User> implements View.OnClickLis
         ViewHolder viewHolder = (ViewHolder)view.getTag();
         User user = (User) getItem(viewHolder.position);
 
-        String apiUrl = "";
-        APIGetRequest request;
         switch (view.getId()) {
             case R.id.memberlistitem_deletebutton:
 

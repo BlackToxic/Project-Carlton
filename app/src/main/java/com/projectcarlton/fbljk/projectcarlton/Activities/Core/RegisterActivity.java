@@ -4,7 +4,6 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.transition.Explode;
-import android.transition.Fade;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -13,19 +12,15 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
+import com.projectcarlton.fbljk.projectcarlton.API.Callback.APIUtilCallback.APIUtilCallback;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
 import com.projectcarlton.fbljk.projectcarlton.API.Exception.APIException;
-import com.projectcarlton.fbljk.projectcarlton.API.Request.APIGetRequest;
-import com.projectcarlton.fbljk.projectcarlton.API.Request.APIPostRequest;
-import com.projectcarlton.fbljk.projectcarlton.Data.User;
+import com.projectcarlton.fbljk.projectcarlton.API.Exception.APIExceptionType;
+import com.projectcarlton.fbljk.projectcarlton.Helpers.APIUtil;
 import com.projectcarlton.fbljk.projectcarlton.Helpers.PasswordHelper;
 import com.projectcarlton.fbljk.projectcarlton.R;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-public class RegisterActivity extends AppCompatActivity implements APICallback {
+public class RegisterActivity extends AppCompatActivity implements APIUtilCallback {
 
     private EditText emailTextbox;
     private EditText usernameTextbox;
@@ -33,6 +28,8 @@ public class RegisterActivity extends AppCompatActivity implements APICallback {
     private Button registerButton;
     private ConstraintLayout generalLayout;
     private LinearLayout progressBarLayout;
+
+    private APIUtil apiUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +40,8 @@ public class RegisterActivity extends AppCompatActivity implements APICallback {
         getWindow().setExitTransition(new Explode());
 
         setContentView(R.layout.activity_register);
+
+        apiUtil = new APIUtil(getApplicationContext(), this);
 
         emailTextbox = (EditText) findViewById(R.id.register_emailTxt);
         usernameTextbox = (EditText) findViewById(R.id.register_usernameTxt);
@@ -69,10 +68,7 @@ public class RegisterActivity extends AppCompatActivity implements APICallback {
         generalLayout.setVisibility(View.INVISIBLE);
 
         String hashedPassword = PasswordHelper.createMD5(password);
-
-        String apiUrl = getString(R.string.API_URL) + "user?register=1&email=" + email + "&username=" + username + "&password=" + hashedPassword;
-        APIGetRequest request = new APIGetRequest(this, CallbackType.REGISTER_CALLBACK, 5000);
-        request.execute(apiUrl);
+        apiUtil.getRegisterAsync(email, username, hashedPassword);
     }
 
     private void clearInput() {
@@ -82,38 +78,37 @@ public class RegisterActivity extends AppCompatActivity implements APICallback {
     }
 
     @Override
-    public void callback(int callbackType, Object resultString) {
+    public void callback(int callbackType, Object result) {
         if (callbackType == CallbackType.REGISTER_CALLBACK) {
-            if (resultString != null && !resultString.equals("")) {
-                try {
-                    JSONObject resultObject = new JSONObject((String)resultString);
+            if (result != null && result instanceof Boolean) {
+                if ((boolean)result) {
+                    Toast toast = Toast.makeText(getApplicationContext(), R.string.registerresponse_success, Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                    toast.show();
 
-                    if (resultObject.has("code")) {
-                        int errorCode = resultObject.getInt("code");
-
-                        if (errorCode == APIException.EXISTING_EMAIL) {
-                            Toast toast = Toast.makeText(getApplicationContext(), R.string.registerresponse_existing_email, Toast.LENGTH_LONG);
-                            toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                            toast.show();
-                        } else if (errorCode == APIException.EXISTING_USERNAME) {
-                            Toast toast = Toast.makeText(getApplicationContext(), R.string.registerresponse_existing_username, Toast.LENGTH_LONG);
-                            toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                            toast.show();
-                        } else if (errorCode == APIException.INVALID_EMAIL) {
-                            Toast toast = Toast.makeText(getApplicationContext(), R.string.registerresponse_invalid_email, Toast.LENGTH_LONG);
-                            toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                            toast.show();
-                        }
-                    } else if (resultObject.has("id")) {
-                        Toast toast = Toast.makeText(getApplicationContext(), R.string.registerresponse_success, Toast.LENGTH_LONG);
-                        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                        toast.show();
-
-                        clearInput();
-                    }
-                } catch (JSONException e){
-                    e.printStackTrace();
+                    clearInput();
                 }
+            } else if (result != null && result instanceof APIException) {
+                APIException exception = (APIException)result;
+                int errorCode = exception.getType();
+
+                if (errorCode == APIExceptionType.EXISTING_EMAIL) {
+                    Toast toast = Toast.makeText(getApplicationContext(), R.string.registerresponse_existing_email, Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                    toast.show();
+                } else if (errorCode == APIExceptionType.EXISTING_USERNAME) {
+                    Toast toast = Toast.makeText(getApplicationContext(), R.string.registerresponse_existing_username, Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                    toast.show();
+                } else if (errorCode == APIExceptionType.INVALID_EMAIL) {
+                    Toast toast = Toast.makeText(getApplicationContext(), R.string.registerresponse_invalid_email, Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                    toast.show();
+                }
+            } else {
+                Toast toast = Toast.makeText(getApplicationContext(), R.string.API_ERROR, Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                toast.show();
             }
         }
 

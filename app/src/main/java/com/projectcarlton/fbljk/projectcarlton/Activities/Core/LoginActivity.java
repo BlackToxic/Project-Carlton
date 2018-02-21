@@ -14,18 +14,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
+import com.projectcarlton.fbljk.projectcarlton.API.Callback.APIUtilCallback.APIUtilCallback;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
 import com.projectcarlton.fbljk.projectcarlton.API.Exception.APIException;
-import com.projectcarlton.fbljk.projectcarlton.API.Request.APILoginGetRequest;
+import com.projectcarlton.fbljk.projectcarlton.API.Exception.APIExceptionType;
 import com.projectcarlton.fbljk.projectcarlton.Data.User;
+import com.projectcarlton.fbljk.projectcarlton.Helpers.APIUtil;
 import com.projectcarlton.fbljk.projectcarlton.Helpers.PasswordHelper;
 import com.projectcarlton.fbljk.projectcarlton.R;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-public class LoginActivity extends AppCompatActivity implements APICallback {
+public class LoginActivity extends AppCompatActivity implements APIUtilCallback {
 
     private EditText userNameTextbox;
     private EditText passwordTextbox;
@@ -33,6 +31,8 @@ public class LoginActivity extends AppCompatActivity implements APICallback {
     private TextView forgotButton;
     private ConstraintLayout generalLayout;
     private LinearLayout progressBarLayout;
+
+    private APIUtil apiUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +43,8 @@ public class LoginActivity extends AppCompatActivity implements APICallback {
         getWindow().setExitTransition(new Explode());
 
         setContentView(R.layout.activity_login);
+
+        apiUtil = new APIUtil(getApplicationContext(), this);
 
         userNameTextbox = (EditText) findViewById(R.id.login_usernameTxt);
         passwordTextbox = (EditText) findViewById(R.id.login_passwordTxt);
@@ -76,9 +78,7 @@ public class LoginActivity extends AppCompatActivity implements APICallback {
         generalLayout.setVisibility(View.INVISIBLE);
 
         String hashedPassword = PasswordHelper.createMD5(password);
-
-        APILoginGetRequest request = new APILoginGetRequest(this, CallbackType.LOGIN_CALLBACK, 1000, getApplicationContext());
-        request.execute(getString(R.string.API_URL), username, hashedPassword);
+        apiUtil.getLoginAsync(username, hashedPassword);
     }
 
     private void saveUserCredentials(User user) {
@@ -89,51 +89,44 @@ public class LoginActivity extends AppCompatActivity implements APICallback {
     }
 
     @Override
-    public void callback(int callbackType, Object resultString) {
+    public void callback(int callbackType, Object result) {
         if (callbackType == CallbackType.LOGIN_CALLBACK) {
-            if (resultString != null && !resultString.equals("")) {
-                try {
-                    JSONObject resultObject = new JSONObject((String)resultString);
+            if (result != null && result instanceof User) {
+                User user = (User) result;
 
-                    if (resultObject.has("code")) {
-                        int errorCode = resultObject.getInt("code");
+                saveUserCredentials(user);
 
-                        if (errorCode == APIException.UNKNOWN_USER || errorCode == APIException.WRONG_PASSWORD) {
-                            Toast toast = Toast.makeText(getApplicationContext(), R.string.loginresponse_unknown_credentials, Toast.LENGTH_LONG);
-                            toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                            toast.show();
-                        } else if (errorCode == APIException.NO_ACTIVATED_ACCOUNT) {
-                            Toast toast = Toast.makeText(getApplicationContext(), R.string.loginresponse_noactivated_account, Toast.LENGTH_LONG);
-                            toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                            toast.show();
-                        }
-                    } else if (resultObject.has("username")) {
-                        User user = new User();
-                        user.userId = resultObject.getString("id");
-                        user.userName = resultObject.getString("username");
-                        user.userPassword = resultObject.getString("hash");
+                Intent intent = new Intent(this, GroupsActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("UserId", user.userId);
+                bundle.putString("UserName", user.userName);
+                bundle.putString("UserPassword", user.userPassword);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            } else if (result != null && result instanceof APIException) {
+                APIException exception = (APIException)result;
+                int errorCode = exception.getType();
 
-                        saveUserCredentials(user);
-
-                        Intent intent = new Intent(this, GroupsActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putString("UserId", user.userId);
-                        bundle.putString("UserName", user.userName);
-                        bundle.putString("UserPassword", user.userPassword);
-                        intent.putExtras(bundle);
-                        startActivity(intent);
-                    }
-                } catch (JSONException e){
-                    e.printStackTrace();
+                if (errorCode == APIExceptionType.UNKNOWN_USER || errorCode == APIExceptionType.WRONG_PASSWORD) {
+                    Toast toast = Toast.makeText(getApplicationContext(), R.string.loginresponse_unknown_credentials, Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                    toast.show();
+                } else if (errorCode == APIExceptionType.NO_ACTIVATED_ACCOUNT) {
+                    Toast toast = Toast.makeText(getApplicationContext(), R.string.loginresponse_noactivated_account, Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                    toast.show();
                 }
+
+                progressBarLayout.setVisibility(View.INVISIBLE);
+                generalLayout.setVisibility(View.VISIBLE);
             } else {
                 Toast toast = Toast.makeText(getApplicationContext(), R.string.API_ERROR, Toast.LENGTH_LONG);
                 toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
                 toast.show();
+
+                progressBarLayout.setVisibility(View.INVISIBLE);
+                generalLayout.setVisibility(View.VISIBLE);
             }
         }
-
-        progressBarLayout.setVisibility(View.INVISIBLE);
-        generalLayout.setVisibility(View.VISIBLE);
     }
 }

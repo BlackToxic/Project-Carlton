@@ -11,11 +11,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
+import com.projectcarlton.fbljk.projectcarlton.API.Callback.APIUtilCallback.APIUtilCallback;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallbackType;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallbacks;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
 import com.projectcarlton.fbljk.projectcarlton.API.Request.APIGetImageRequest;
 import com.projectcarlton.fbljk.projectcarlton.Data.Group;
+import com.projectcarlton.fbljk.projectcarlton.Helpers.APIUtil;
 import com.projectcarlton.fbljk.projectcarlton.R;
 
 import java.util.ArrayList;
@@ -26,8 +28,9 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
     private Context context;
     private int lastPosition = -1;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements APICallback {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements APIUtilCallback {
         String groupPhoto;
+        APIUtil apiUtil;
 
         CardView cardView;
         TextView txtName;
@@ -40,14 +43,14 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
             this.txtName = (TextView)itemView.findViewById(R.id.grouplist_groupname);
             this.txtDescription = (TextView)itemView.findViewById(R.id.grouplist_groupdesc);
             this.imgGroup = (ImageView) itemView.findViewById(R.id.grouplist_groupphoto);
+            apiUtil = new APIUtil(itemView.getContext(), this);
         }
 
         public void setGroupPhoto(String groupPhoto) {
             this.groupPhoto = groupPhoto;
 
             if (this.groupPhoto != null && !this.groupPhoto.equals("")) {
-                APIGetImageRequest request = new APIGetImageRequest(this);
-                request.execute(itemView.getContext().getString(R.string.API_URL) + "image?imagename=" + this.groupPhoto);
+                apiUtil.getImageAsync(groupPhoto);
             }
         }
 
