@@ -11,21 +11,24 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
+import com.projectcarlton.fbljk.projectcarlton.API.Callback.APIUtilCallback.APIUtilCallback;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallbackType;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallbacks;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
 import com.projectcarlton.fbljk.projectcarlton.API.Request.APIGetRequest;
 import com.projectcarlton.fbljk.projectcarlton.Activities.Core.GroupsActivity;
 import com.projectcarlton.fbljk.projectcarlton.Data.Invite;
+import com.projectcarlton.fbljk.projectcarlton.Helpers.APIUtil;
 import com.projectcarlton.fbljk.projectcarlton.R;
 
 import java.util.ArrayList;
 
-public class GroupInvitesAdapter extends ArrayAdapter<Invite> implements View.OnClickListener, APICallback {
+public class GroupInvitesAdapter extends ArrayAdapter<Invite> implements View.OnClickListener, APIUtilCallback {
 
     private ArrayList<Invite> data;
     private Context context;
     private int lastPosition = -1;
+    private APIUtil apiUtil;
 
     private static class ViewHolder {
         int position;
@@ -39,6 +42,7 @@ public class GroupInvitesAdapter extends ArrayAdapter<Invite> implements View.On
         super(context, R.layout.groupinvites_item, data);
         this.data = data;
         this.context = context;
+        apiUtil = new APIUtil(context, this);
     }
 
     @Override
@@ -89,9 +93,7 @@ public class GroupInvitesAdapter extends ArrayAdapter<Invite> implements View.On
         APIGetRequest request;
         switch (view.getId()) {
             case R.id.inviteitem_check_button:
-                apiUrl = context.getString(R.string.API_URL) + "invite?inviteid=" + invite.inviteId + "&userid=" + GroupsActivity.currentUser.userId + "&accept=1";
-                request = new APIGetRequest(this, CallbackType.ACCEPTINVITE_CALLBACK, 5000);
-                request.execute(apiUrl);
+                apiUtil.acceptInviteAsync(invite.inviteId, GroupsActivity.currentUser.userId);
 
                 viewHolder.uncheckButton.setVisibility(View.INVISIBLE);
                 viewHolder.checkButton.setEnabled(false);
@@ -99,9 +101,7 @@ public class GroupInvitesAdapter extends ArrayAdapter<Invite> implements View.On
                 break;
 
             case R.id.inviteitem_uncheck_button:
-                apiUrl = context.getString(R.string.API_URL) + "invite?inviteid=" + invite.inviteId + "&userid=" + GroupsActivity.currentUser.userId + "&accept=0";
-                request = new APIGetRequest(this, CallbackType.REJECTINVITE_CALLBACK, 5000);
-                request.execute(apiUrl);
+                apiUtil.rejectInviteAsync(invite.inviteId, GroupsActivity.currentUser.userId);
 
                 viewHolder.checkButton.setVisibility(View.INVISIBLE);
                 viewHolder.uncheckButton.setEnabled(false);
@@ -111,7 +111,7 @@ public class GroupInvitesAdapter extends ArrayAdapter<Invite> implements View.On
     }
 
     @Override
-    public void callback(int callbackType, Object resultString) {
+    public void callback(int callbackType, Object result) {
         if (callbackType == CallbackType.ACCEPTINVITE_CALLBACK) {
             ActivityCallbacks.request(ActivityCallbackType.GROUPRELOAD_CALLBACK);
         } else if (callbackType == CallbackType.REJECTINVITE_CALLBACK) {

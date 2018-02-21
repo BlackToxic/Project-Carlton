@@ -1,7 +1,6 @@
 package com.projectcarlton.fbljk.projectcarlton.Activities.Core;
 
 import android.content.Intent;
-import android.provider.ContactsContract;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,28 +10,21 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 
-import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
+import com.projectcarlton.fbljk.projectcarlton.API.Callback.APIUtilCallback.APIUtilCallback;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallback;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallbackType;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallbacks;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
-import com.projectcarlton.fbljk.projectcarlton.API.Request.APIGetRequest;
 import com.projectcarlton.fbljk.projectcarlton.Adapter.GroupAdapter;
 import com.projectcarlton.fbljk.projectcarlton.Data.Group;
 import com.projectcarlton.fbljk.projectcarlton.Data.User;
+import com.projectcarlton.fbljk.projectcarlton.Helpers.APIUtil;
 import com.projectcarlton.fbljk.projectcarlton.R;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class GroupsActivity extends AppCompatActivity implements APICallback, ActivityCallback {
+public class GroupsActivity extends AppCompatActivity implements APIUtilCallback, ActivityCallback {
 
     public static User currentUser;
     private ArrayList<Group> groups;
@@ -42,10 +34,14 @@ public class GroupsActivity extends AppCompatActivity implements APICallback, Ac
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
 
+    private APIUtil apiUtil;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groups);
+
+        apiUtil = new APIUtil(getApplicationContext(), this);
 
         ActivityCallbacks.registerActivityCallback(this, ActivityCallbackType.GROUPRELOAD_CALLBACK);
         ActivityCallbacks.registerActivityCallback(this, ActivityCallbackType.GROUPOPEN_CALLBACK);
@@ -128,9 +124,8 @@ public class GroupsActivity extends AppCompatActivity implements APICallback, Ac
 
     public void loadGroups() {
         refreshLayout.setRefreshing(true);
-        String apiUrl = getString(R.string.API_URL) + "group?userid=" + currentUser.userId;
-        APIGetRequest request = new APIGetRequest(this, CallbackType.LOADINGGROUPS_CALLBACK, 5000);
-        request.execute(apiUrl);
+
+        apiUtil.loadGroupsAsync(currentUser.userId);
     }
 
     public void openGroup(Group group) {
@@ -145,39 +140,12 @@ public class GroupsActivity extends AppCompatActivity implements APICallback, Ac
     }
 
     @Override
-    public void callback(int callbackType, Object resultString) {
+    public void callback(int callbackType, Object result) {
         if (callbackType == CallbackType.LOADINGGROUPS_CALLBACK) {
-            if (resultString != null && !resultString.equals("")) {
-                try {
-                    if (((String)resultString).contains("groupid")) {
-                        groups = new ArrayList<Group>();
-
-                        JSONArray array = new JSONArray((String)resultString);
-                        for (int i = 0; i < array.length(); i++) {
-                            JSONObject childObject = array.getJSONObject(i);
-
-                            Group newGroup = new Group();
-                            newGroup.groupId = childObject.getString("groupid");
-                            newGroup.groupName = childObject.getString("groupname");
-                            newGroup.groupDescription = childObject.getString("groupdescription");
-                            newGroup.groupAdmin = childObject.getString("groupadmin");
-                            newGroup.groupPhoto = childObject.getString("groupphoto");
-                            groups.add(newGroup);
-                        }
-
-                        adapter = new GroupAdapter(groups);
-                        groupListView.setAdapter(adapter);
-                    } else {
-                        JSONObject resultObject = new JSONObject((String)resultString);
-
-                        if (resultObject.has("code")) {
-                            int errorCode = resultObject.getInt("code");
-
-                        }
-                    }
-                } catch (Exception ex) {
-
-                }
+            if (result != null && result instanceof ArrayList) {
+                groups = (ArrayList<Group>) result;
+                adapter = new GroupAdapter(groups);
+                groupListView.setAdapter(adapter);
             }
         }
 
@@ -185,7 +153,7 @@ public class GroupsActivity extends AppCompatActivity implements APICallback, Ac
     }
 
     @Override
-    public void callback(int activityCallbackType, Object... options) {
+    public void callbackActivity(int activityCallbackType, Object... options) {
         if (activityCallbackType == ActivityCallbackType.GROUPRELOAD_CALLBACK) {
             loadGroups();
         } else if (activityCallbackType == ActivityCallbackType.GROUPOPEN_CALLBACK) {

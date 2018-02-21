@@ -14,5 +14,6 @@ public class CallbackType {
     public static final int LEAVEGROUP_CALLBACK         = 0x10;
     public static final int DELETEGROUP_CALLBACK        = 0x11;
     public static final int DOWNLOADIMAGE_CALLBACK      = 0x12;
+    public static final int SEARCHUSERS_CALLBACK        = 0x13;
 
 }

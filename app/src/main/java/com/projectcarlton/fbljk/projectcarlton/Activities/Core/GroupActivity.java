@@ -11,16 +11,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
+import com.projectcarlton.fbljk.projectcarlton.API.Callback.APIUtilCallback.APIUtilCallback;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallbackType;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallbacks;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
-import com.projectcarlton.fbljk.projectcarlton.API.Request.APIGetRequest;
 import com.projectcarlton.fbljk.projectcarlton.Activities.Moduls.MemberActivity;
 import com.projectcarlton.fbljk.projectcarlton.Data.Group;
+import com.projectcarlton.fbljk.projectcarlton.Helpers.APIUtil;
 import com.projectcarlton.fbljk.projectcarlton.R;
 
-public class GroupActivity extends AppCompatActivity implements APICallback {
+public class GroupActivity extends AppCompatActivity implements APIUtilCallback {
 
     public static Group currentGroup;
 
@@ -28,10 +28,14 @@ public class GroupActivity extends AppCompatActivity implements APICallback {
     private Button deleteButton;
     private Button leaveButton;
 
+    private APIUtil apiUtil;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group);
+
+        apiUtil = new APIUtil(getApplicationContext(), this);
 
         if (getIntent() != null && getIntent().getExtras() != null) {
             currentGroup = new Group();
@@ -106,15 +110,11 @@ public class GroupActivity extends AppCompatActivity implements APICallback {
     }
 
     private void leaveGroup() {
-        String apiUrl = getString(R.string.API_URL) + "group?leave=1&groupid=" + currentGroup.groupId + "&userid=" + GroupsActivity.currentUser.userId;
-        APIGetRequest request = new APIGetRequest(this, CallbackType.LEAVEGROUP_CALLBACK, 5000);
-        request.execute(apiUrl);
+        apiUtil.leaveGroupAsync(currentGroup.groupId, GroupsActivity.currentUser.userId);
     }
 
     private void deleteGroup() {
-        String apiUrl = getString(R.string.API_URL) + "group?delete=1&groupid=" + currentGroup.groupId;
-        APIGetRequest request = new APIGetRequest(this, CallbackType.DELETEGROUP_CALLBACK, 5000);
-        request.execute(apiUrl);
+        apiUtil.deleteGroupAsync(currentGroup.groupId);
     }
 
     public static boolean isUserAdmin() {
@@ -128,10 +128,10 @@ public class GroupActivity extends AppCompatActivity implements APICallback {
     }
 
     @Override
-    public void callback(int callbackType, Object resultString) {
+    public void callback(int callbackType, Object result) {
         if (callbackType == CallbackType.LEAVEGROUP_CALLBACK) {
-            if (resultString != null && !resultString.equals("") && !resultString.equals("null")) {
-                if (resultString.equals("1")) {
+            if (result != null && result instanceof  Boolean) {
+                if ((boolean) result) {
                     ActivityCallbacks.request(ActivityCallbackType.GROUPRELOAD_CALLBACK);
                     onBackPressed();
                 }
@@ -141,8 +141,8 @@ public class GroupActivity extends AppCompatActivity implements APICallback {
                 toast.show();
             }
         } else if (callbackType == CallbackType.DELETEGROUP_CALLBACK) {
-            if (resultString != null && !resultString.equals("") && !resultString.equals("null")) {
-                if (resultString.equals("1")) {
+            if (result != null && result instanceof  Boolean) {
+                if ((boolean) result) {
                     ActivityCallbacks.request(ActivityCallbackType.GROUPRELOAD_CALLBACK);
                     onBackPressed();
                 }

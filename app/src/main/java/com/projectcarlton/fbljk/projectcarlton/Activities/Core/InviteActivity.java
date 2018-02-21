@@ -13,22 +13,20 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
+import com.projectcarlton.fbljk.projectcarlton.API.Callback.APIUtilCallback.APIUtilCallback;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
-import com.projectcarlton.fbljk.projectcarlton.API.Request.APIGetRequest;
 import com.projectcarlton.fbljk.projectcarlton.Adapter.InviteUsersAdapter;
 import com.projectcarlton.fbljk.projectcarlton.Data.User;
+import com.projectcarlton.fbljk.projectcarlton.Helpers.APIUtil;
 import com.projectcarlton.fbljk.projectcarlton.R;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class InviteActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, APICallback {
+public class InviteActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, APIUtilCallback {
 
     private ArrayList<User> users;
     private InviteUsersAdapter adapter;
+    private APIUtil apiUtil;
 
     private LinearLayout progressBarLayout;
     private ListView userListView;
@@ -37,6 +35,8 @@ public class InviteActivity extends AppCompatActivity implements SearchView.OnQu
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_invite);
+
+        apiUtil = new APIUtil(getApplicationContext(), this);
 
         Toolbar invitetoolbar = (Toolbar) findViewById(R.id.invite_toolbar);
         invitetoolbar.setTitle("");
@@ -93,46 +93,24 @@ public class InviteActivity extends AppCompatActivity implements SearchView.OnQu
     private void searchUsers(String userName) {
         progressBarLayout.setVisibility(View.VISIBLE);
 
-        String apiUrl = getString(R.string.API_URL) + "user?username=" + userName + "&groupid=" + GroupActivity.currentGroup.groupId;
-        APIGetRequest request = new APIGetRequest(this, CallbackType.LOADUSERS_CALLBACK, 5000);
-        request.execute(apiUrl);
+        apiUtil.searchUsersAsync(userName, GroupActivity.currentGroup.groupId);
     }
 
     @Override
-    public void callback(int callbackType, Object resultString) {
-        if (callbackType == CallbackType.LOADUSERS_CALLBACK) {
+    public void callback(int callbackType, Object result) {
+        if (callbackType == CallbackType.SEARCHUSERS_CALLBACK) {
             users = new ArrayList<User>();
             if (adapter != null)
                 adapter.clear();
 
-            if (resultString != null && !resultString.equals("") && !resultString.equals("null")) {
-                try {
-                    if (((String)resultString).contains("id")) {
-                        JSONArray array = new JSONArray((String)resultString);
-                        for (int i = 0; i < array.length(); i++) {
-                            JSONObject childObject = array.getJSONObject(i);
-
-                            User user = new User();
-                            user.userId = childObject.getString("id");
-                            user.userName = childObject.getString("username");
-                            users.add(user);
-                        }
-
-                        adapter = new InviteUsersAdapter(users, getApplicationContext());
-                        userListView.setAdapter(adapter);
-                        userListView.setVisibility(View.VISIBLE);
-                    } else {
-                        JSONObject resultObject = new JSONObject((String)resultString);
-
-                        if (resultObject.has("code")) {
-                            int errorCode = resultObject.getInt("code");
-                        }
-                    }
-                } catch (Exception ex) {
-
-                }
+            if (result != null && result instanceof ArrayList) {
+                users = (ArrayList<User>)result;
+                adapter = new InviteUsersAdapter(users, getApplicationContext());
+                userListView.setAdapter(adapter);
+                userListView.setVisibility(View.VISIBLE);
             }
-            progressBarLayout.setVisibility(View.GONE);
         }
+
+        progressBarLayout.setVisibility(View.GONE);
     }
 }

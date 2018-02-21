@@ -14,16 +14,13 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
+import com.projectcarlton.fbljk.projectcarlton.API.Callback.APIUtilCallback.APIUtilCallback;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
 import com.projectcarlton.fbljk.projectcarlton.Data.User;
 import com.projectcarlton.fbljk.projectcarlton.Helpers.APIUtil;
 import com.projectcarlton.fbljk.projectcarlton.R;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-public class WelcomeActivity extends AppCompatActivity implements APICallback {
+public class WelcomeActivity extends AppCompatActivity implements APIUtilCallback {
 
     private Button registerButton;
     private TextView loginButton;
@@ -89,30 +86,18 @@ public class WelcomeActivity extends AppCompatActivity implements APICallback {
     }
 
     @Override
-    public void callback(int callbackType, Object resultString) {
+    public void callback(int callbackType, Object result) {
         if (callbackType == CallbackType.LOGIN_CALLBACK) {
-            if (resultString != null && !resultString.equals("")) {
-                try {
-                    JSONObject resultObject = new JSONObject((String)resultString);
+            if (result != null && result instanceof User) {
+                User user = (User) result;
 
-                    if (resultObject.has("code")) {
-
-                    } else if (resultObject.has("username")) {
-                        User user = new User();
-                        user.userId = resultObject.getString("id");
-                        user.userName = resultObject.getString("username");
-                        user.userPassword = resultObject.getString("hash");
-
-                        Intent intent = new Intent(this, GroupsActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putString("UserId", user.userId);
-                        bundle.putString("UserName", user.userName);
-                        bundle.putString("UserPassword", user.userPassword);
-                        intent.putExtras(bundle);
-                        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(WelcomeActivity.this).toBundle());
-                    }
-                } catch (JSONException e){
-                }
+                Intent intent = new Intent(this, GroupsActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("UserId", user.userId);
+                bundle.putString("UserName", user.userName);
+                bundle.putString("UserPassword", user.userPassword);
+                intent.putExtras(bundle);
+                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(WelcomeActivity.this).toBundle());
             } else {
                 progressBarLayout.setVisibility(View.INVISIBLE);
                 generalLayout.setVisibility(View.VISIBLE);
