@@ -15,6 +15,7 @@ import com.projectcarlton.fbljk.projectcarlton.API.Callback.APIUtilCallback.APIU
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
 import com.projectcarlton.fbljk.projectcarlton.Activities.Core.GroupActivity;
 import com.projectcarlton.fbljk.projectcarlton.Activities.Core.GroupsActivity;
+import com.projectcarlton.fbljk.projectcarlton.Cache.SettingsCache;
 import com.projectcarlton.fbljk.projectcarlton.Data.User;
 import com.projectcarlton.fbljk.projectcarlton.Helpers.APIUtil;
 import com.projectcarlton.fbljk.projectcarlton.R;
@@ -82,7 +83,7 @@ public class InviteUsersAdapter extends ArrayAdapter<User> implements View.OnCli
 
         switch (view.getId()) {
             case R.id.inviteuserlistitem_invitebutton:
-                apiUtil.inviteUserAsync(GroupActivity.currentGroup.groupId, GroupsActivity.currentUser.userId, user.userId);
+                apiUtil.inviteUserAsync(SettingsCache.CURRENTGROUP.groupId, SettingsCache.CURRENTUSER.userId, user.userId);
 
                 viewHolder.inviteButton.setText(R.string.inviteusers_alreadyinvited_text);
                 viewHolder.inviteButton.setBackgroundColor(Color.WHITE);

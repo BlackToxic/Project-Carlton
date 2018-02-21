@@ -16,13 +16,12 @@ import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.Ac
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallbacks;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
 import com.projectcarlton.fbljk.projectcarlton.Activities.Moduls.MemberActivity;
+import com.projectcarlton.fbljk.projectcarlton.Cache.SettingsCache;
 import com.projectcarlton.fbljk.projectcarlton.Data.Group;
 import com.projectcarlton.fbljk.projectcarlton.Helpers.APIUtil;
 import com.projectcarlton.fbljk.projectcarlton.R;
 
 public class GroupActivity extends AppCompatActivity implements APIUtilCallback {
-
-    public static Group currentGroup;
 
     private Button memberButton;
     private Button deleteButton;
@@ -38,14 +37,14 @@ public class GroupActivity extends AppCompatActivity implements APIUtilCallback 
         apiUtil = new APIUtil(getApplicationContext(), this);
 
         if (getIntent() != null && getIntent().getExtras() != null) {
-            currentGroup = new Group();
-            currentGroup.groupId = getIntent().getExtras().getString("GroupId");
-            currentGroup.groupName = getIntent().getExtras().getString("GroupName");
-            currentGroup.groupDescription = getIntent().getExtras().getString("GroupDescription");
-            currentGroup.groupAdmin = getIntent().getExtras().getString("GroupAdmin");
+            SettingsCache.CURRENTGROUP = new Group();
+            SettingsCache.CURRENTGROUP.groupId = getIntent().getExtras().getString("GroupId");
+            SettingsCache.CURRENTGROUP.groupName = getIntent().getExtras().getString("GroupName");
+            SettingsCache.CURRENTGROUP.groupDescription = getIntent().getExtras().getString("GroupDescription");
+            SettingsCache.CURRENTGROUP.groupAdmin = getIntent().getExtras().getString("GroupAdmin");
 
             Toolbar grouptoolbar = (Toolbar) findViewById(R.id.group_toolbar);
-            grouptoolbar.setTitle(currentGroup.groupName);
+            grouptoolbar.setTitle(SettingsCache.CURRENTGROUP.groupName);
             setSupportActionBar(grouptoolbar);
         }
 
@@ -104,27 +103,17 @@ public class GroupActivity extends AppCompatActivity implements APIUtilCallback 
             }
         });
 
-        if (!isUserAdmin()) {
+        if (!SettingsCache.isUserAdmin()) {
             deleteButton.setVisibility(View.GONE);
         }
     }
 
     private void leaveGroup() {
-        apiUtil.leaveGroupAsync(currentGroup.groupId, GroupsActivity.currentUser.userId);
+        apiUtil.leaveGroupAsync(SettingsCache.CURRENTGROUP.groupId, SettingsCache.CURRENTUSER.userId);
     }
 
     private void deleteGroup() {
-        apiUtil.deleteGroupAsync(currentGroup.groupId);
-    }
-
-    public static boolean isUserAdmin() {
-        if (GroupsActivity.currentUser != null && GroupActivity.currentGroup != null) {
-            if (GroupActivity.currentGroup.groupAdmin.equals(GroupsActivity.currentUser.userId)) {
-                return true;
-            }
-        }
-
-        return false;
+        apiUtil.deleteGroupAsync(SettingsCache.CURRENTGROUP.groupId);
     }
 
     @Override

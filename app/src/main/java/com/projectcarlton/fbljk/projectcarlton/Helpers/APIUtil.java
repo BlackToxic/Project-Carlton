@@ -13,6 +13,7 @@ import com.projectcarlton.fbljk.projectcarlton.API.Request.APIGetRequest;
 import com.projectcarlton.fbljk.projectcarlton.API.Request.APILoginGetRequest;
 import com.projectcarlton.fbljk.projectcarlton.Activities.Core.GroupActivity;
 import com.projectcarlton.fbljk.projectcarlton.Activities.Core.GroupsActivity;
+import com.projectcarlton.fbljk.projectcarlton.Cache.SettingsCache;
 import com.projectcarlton.fbljk.projectcarlton.Data.Group;
 import com.projectcarlton.fbljk.projectcarlton.Data.Invite;
 import com.projectcarlton.fbljk.projectcarlton.Data.User;
@@ -293,7 +294,7 @@ public class APIUtil implements APICallback {
                             user.userId = childObject.getString("id");
                             user.userName = childObject.getString("username");
 
-                            if (!user.userId.equals(GroupsActivity.currentUser.userId))
+                            if (!user.userId.equals(SettingsCache.CURRENTUSER.userId))
                                 users.add(user);
                         }
 

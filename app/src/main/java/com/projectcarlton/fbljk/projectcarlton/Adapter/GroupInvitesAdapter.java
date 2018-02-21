@@ -17,6 +17,7 @@ import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.Ac
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
 import com.projectcarlton.fbljk.projectcarlton.API.Request.APIGetRequest;
 import com.projectcarlton.fbljk.projectcarlton.Activities.Core.GroupsActivity;
+import com.projectcarlton.fbljk.projectcarlton.Cache.SettingsCache;
 import com.projectcarlton.fbljk.projectcarlton.Data.Invite;
 import com.projectcarlton.fbljk.projectcarlton.Helpers.APIUtil;
 import com.projectcarlton.fbljk.projectcarlton.R;
@@ -93,7 +94,7 @@ public class GroupInvitesAdapter extends ArrayAdapter<Invite> implements View.On
         APIGetRequest request;
         switch (view.getId()) {
             case R.id.inviteitem_check_button:
-                apiUtil.acceptInviteAsync(invite.inviteId, GroupsActivity.currentUser.userId);
+                apiUtil.acceptInviteAsync(invite.inviteId, SettingsCache.CURRENTUSER.userId);
 
                 viewHolder.uncheckButton.setVisibility(View.INVISIBLE);
                 viewHolder.checkButton.setEnabled(false);
@@ -101,7 +102,7 @@ public class GroupInvitesAdapter extends ArrayAdapter<Invite> implements View.On
                 break;
 
             case R.id.inviteitem_uncheck_button:
-                apiUtil.rejectInviteAsync(invite.inviteId, GroupsActivity.currentUser.userId);
+                apiUtil.rejectInviteAsync(invite.inviteId, SettingsCache.CURRENTUSER.userId);
 
                 viewHolder.checkButton.setVisibility(View.INVISIBLE);
                 viewHolder.uncheckButton.setEnabled(false);

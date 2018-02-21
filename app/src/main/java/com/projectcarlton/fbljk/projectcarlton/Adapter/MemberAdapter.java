@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.projectcarlton.fbljk.projectcarlton.API.Request.APIGetRequest;
 import com.projectcarlton.fbljk.projectcarlton.Activities.Core.GroupActivity;
+import com.projectcarlton.fbljk.projectcarlton.Cache.SettingsCache;
 import com.projectcarlton.fbljk.projectcarlton.Data.User;
 import com.projectcarlton.fbljk.projectcarlton.R;
 
@@ -66,7 +67,7 @@ public class MemberAdapter extends ArrayAdapter<User> implements View.OnClickLis
         viewHolder.deleteButton.setOnClickListener(this);
         viewHolder.deleteButton.setTag(viewHolder);
 
-        if (!GroupActivity.isUserAdmin())
+        if (!SettingsCache.isUserAdmin())
             viewHolder.deleteButton.setVisibility(View.GONE);
 
         return result;

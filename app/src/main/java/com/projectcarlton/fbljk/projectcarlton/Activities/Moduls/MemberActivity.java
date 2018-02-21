@@ -16,6 +16,7 @@ import com.projectcarlton.fbljk.projectcarlton.Activities.Core.GroupActivity;
 import com.projectcarlton.fbljk.projectcarlton.Activities.Core.GroupsActivity;
 import com.projectcarlton.fbljk.projectcarlton.Activities.Core.InviteActivity;
 import com.projectcarlton.fbljk.projectcarlton.Adapter.MemberAdapter;
+import com.projectcarlton.fbljk.projectcarlton.Cache.SettingsCache;
 import com.projectcarlton.fbljk.projectcarlton.Data.User;
 import com.projectcarlton.fbljk.projectcarlton.Helpers.APIUtil;
 import com.projectcarlton.fbljk.projectcarlton.R;
@@ -61,7 +62,7 @@ public class MemberActivity extends AppCompatActivity implements APIUtilCallback
         memberList = (ListView) findViewById(R.id.member_memberlist);
         spacer = (View) findViewById(R.id.member_spacer_bottom);
 
-        if (!GroupActivity.isUserAdmin()) {
+        if (!SettingsCache.isUserAdmin()) {
             inviteButton.setVisibility(View.GONE);
             spacer.setVisibility(View.GONE);
         }
@@ -72,7 +73,7 @@ public class MemberActivity extends AppCompatActivity implements APIUtilCallback
     private void loadMembers() {
         progressBarLayout.setVisibility(View.VISIBLE);
 
-        apiUtil.loadUsersByGroupAsync(GroupActivity.currentGroup.groupId);
+        apiUtil.loadUsersByGroupAsync(SettingsCache.CURRENTGROUP.groupId);
     }
 
     @Override
