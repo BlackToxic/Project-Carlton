@@ -1,28 +1,26 @@
 package com.projectcarlton.fbljk.projectcarlton.Activities.Core;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
-import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
+import com.projectcarlton.fbljk.projectcarlton.API.Callback.APIUtilCallback.APIUtilCallback;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
-import com.projectcarlton.fbljk.projectcarlton.API.Request.APIGetRequest;
 import com.projectcarlton.fbljk.projectcarlton.Adapter.GroupInvitesAdapter;
 import com.projectcarlton.fbljk.projectcarlton.Data.Invite;
+import com.projectcarlton.fbljk.projectcarlton.Helpers.APIUtil;
 import com.projectcarlton.fbljk.projectcarlton.R;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class GroupInvitationsActivity extends AppCompatActivity implements APICallback {
+public class GroupInvitationsActivity extends AppCompatActivity implements APIUtilCallback {
 
     private ArrayList<Invite> invites;
     private GroupInvitesAdapter adapter;
+    private APIUtil apiUtil;
 
     private LinearLayout progressBarLayout;
     private ListView invitesListView;
@@ -31,6 +29,8 @@ public class GroupInvitationsActivity extends AppCompatActivity implements APICa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_invitations);
+
+        apiUtil = new APIUtil(getApplicationContext(), this);
 
         Toolbar invitetoolbar = (Toolbar) findViewById(R.id.groupinvites_toolbar);
         invitetoolbar.setTitle(R.string.groupinvitations_title);
@@ -43,48 +43,21 @@ public class GroupInvitationsActivity extends AppCompatActivity implements APICa
         progressBarLayout.setVisibility(View.VISIBLE);
 
         if (GroupsActivity.currentUser != null) {
-            String apiUrl = getString(R.string.API_URL) + "invite?userid=" + GroupsActivity.currentUser.userId;
-            APIGetRequest request = new APIGetRequest(this, CallbackType.LOADINGINVITES_CALLBACK, 5000);
-            request.execute(apiUrl);
+            apiUtil.loadInvitesAsync(GroupsActivity.currentUser.userId);
         }
     }
 
     @Override
-    public void callback(int callbackType, Object resultString) {
+    public void callback(int callbackType, Object result) {
         if (callbackType == CallbackType.LOADINGINVITES_CALLBACK) {
-            if (resultString != null && !resultString.equals("")) {
-                try {
-                    if (((String)resultString).contains("id")) {
-                        invites = new ArrayList<Invite>();
-
-                        JSONArray array = new JSONArray((String)resultString);
-                        for (int i = 0; i < array.length(); i++) {
-                            JSONObject childObject = array.getJSONObject(i);
-
-                            Invite invite = new Invite();
-                            invite.inviteId = childObject.getString("id");
-                            invite.senderName = "von " + childObject.getString("sender");
-                            invite.groupName = childObject.getString("groupname");
-                            invites.add(invite);
-                        }
-
-                        adapter = new GroupInvitesAdapter(invites, getApplicationContext());
-                        invitesListView.setAdapter(adapter);
-                        invitesListView.setVisibility(View.VISIBLE);
-                    } else {
-                        JSONObject resultObject = new JSONObject((String)resultString);
-
-                        if (resultObject.has("code")) {
-                            int errorCode = resultObject.getInt("code");
-
-                        }
-                    }
-                } catch (Exception ex) {
-
-                }
-
-                progressBarLayout.setVisibility(View.GONE);
+            if (result != null && result instanceof ArrayList) {
+                invites = (ArrayList<Invite>) result;
+                adapter = new GroupInvitesAdapter(invites, getApplicationContext());
+                invitesListView.setAdapter(adapter);
+                invitesListView.setVisibility(View.VISIBLE);
             }
         }
+
+        progressBarLayout.setVisibility(View.GONE);
     }
 }

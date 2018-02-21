@@ -33,7 +33,7 @@ public class ActivityCallbacks {
             if (callbacks.get(activityCallbackType) != null && !callbacks.get(activityCallbackType).isEmpty()) {
                 for (int i = 0; i < callbacks.get(activityCallbackType).size(); i++) {
                     ActivityCallback callback = callbacks.get(activityCallbackType).get(i);
-                    callback.callback(activityCallbackType, options);
+                    callback.callbackActivity(activityCallbackType, options);
                 }
             }
         }
