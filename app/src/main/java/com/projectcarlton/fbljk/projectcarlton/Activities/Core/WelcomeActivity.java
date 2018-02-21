@@ -16,8 +16,8 @@ import android.widget.TextView;
 
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
-import com.projectcarlton.fbljk.projectcarlton.API.Request.APILoginGetRequest;
 import com.projectcarlton.fbljk.projectcarlton.Data.User;
+import com.projectcarlton.fbljk.projectcarlton.Helpers.APIUtil;
 import com.projectcarlton.fbljk.projectcarlton.R;
 
 import org.json.JSONException;
@@ -30,6 +30,8 @@ public class WelcomeActivity extends AppCompatActivity implements APICallback {
     private ConstraintLayout generalLayout;
     private LinearLayout progressBarLayout;
 
+    private APIUtil apiUtil;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +41,8 @@ public class WelcomeActivity extends AppCompatActivity implements APICallback {
         getWindow().setExitTransition(new Explode());
 
         setContentView(R.layout.activity_welcome);
+
+        apiUtil = new APIUtil(getApplicationContext(), this);
 
         registerButton = (Button) findViewById(R.id.welcome_registerButton);
         loginButton = (TextView) findViewById(R.id.welcome_loginButton);
@@ -81,9 +85,7 @@ public class WelcomeActivity extends AppCompatActivity implements APICallback {
     }
 
     private void login(String username, String password) {
-        String hashedPassword = password;
-        APILoginGetRequest request = new APILoginGetRequest(this, CallbackType.LOGIN_CALLBACK, 1000, getApplicationContext());
-        request.execute(getString(R.string.API_URL), username, hashedPassword);
+        apiUtil.getLoginAsync(username, password);
     }
 
     @Override

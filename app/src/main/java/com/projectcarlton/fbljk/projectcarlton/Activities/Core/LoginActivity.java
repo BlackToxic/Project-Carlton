@@ -19,6 +19,7 @@ import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
 import com.projectcarlton.fbljk.projectcarlton.API.Exception.APIException;
 import com.projectcarlton.fbljk.projectcarlton.API.Request.APILoginGetRequest;
 import com.projectcarlton.fbljk.projectcarlton.Data.User;
+import com.projectcarlton.fbljk.projectcarlton.Helpers.APIUtil;
 import com.projectcarlton.fbljk.projectcarlton.Helpers.PasswordHelper;
 import com.projectcarlton.fbljk.projectcarlton.R;
 
@@ -34,6 +35,8 @@ public class LoginActivity extends AppCompatActivity implements APICallback {
     private ConstraintLayout generalLayout;
     private LinearLayout progressBarLayout;
 
+    private APIUtil apiUtil;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +46,8 @@ public class LoginActivity extends AppCompatActivity implements APICallback {
         getWindow().setExitTransition(new Explode());
 
         setContentView(R.layout.activity_login);
+
+        apiUtil = new APIUtil(getApplicationContext(), this);
 
         userNameTextbox = (EditText) findViewById(R.id.login_usernameTxt);
         passwordTextbox = (EditText) findViewById(R.id.login_passwordTxt);
@@ -77,8 +82,7 @@ public class LoginActivity extends AppCompatActivity implements APICallback {
 
         String hashedPassword = PasswordHelper.createMD5(password);
 
-        APILoginGetRequest request = new APILoginGetRequest(this, CallbackType.LOGIN_CALLBACK, 1000, getApplicationContext());
-        request.execute(getString(R.string.API_URL), username, hashedPassword);
+        apiUtil.getLoginAsync(username, hashedPassword);
     }
 
     private void saveUserCredentials(User user) {
