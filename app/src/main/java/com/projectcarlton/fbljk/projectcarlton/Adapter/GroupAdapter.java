@@ -1,67 +1,96 @@
 package com.projectcarlton.fbljk.projectcarlton.Adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ArrayAdapter;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
+import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallbackType;
+import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallbacks;
+import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
+import com.projectcarlton.fbljk.projectcarlton.API.Request.APIGetImageRequest;
 import com.projectcarlton.fbljk.projectcarlton.Data.Group;
 import com.projectcarlton.fbljk.projectcarlton.R;
 
 import java.util.ArrayList;
 
-public class GroupAdapter extends ArrayAdapter<Group> {
+public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> {
 
     private ArrayList<Group> data;
     private Context context;
     private int lastPosition = -1;
 
-    private static class ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements APICallback {
+        String groupPhoto;
+
+        CardView cardView;
         TextView txtName;
         TextView txtDescription;
+        ImageView imgGroup;
+
+        ViewHolder(View itemView) {
+            super(itemView);
+            this.cardView = (CardView) itemView.findViewById(R.id.grouplist_card);
+            this.txtName = (TextView)itemView.findViewById(R.id.grouplist_groupname);
+            this.txtDescription = (TextView)itemView.findViewById(R.id.grouplist_groupdesc);
+            this.imgGroup = (ImageView) itemView.findViewById(R.id.grouplist_groupphoto);
+        }
+
+        public void setGroupPhoto(String groupPhoto) {
+            this.groupPhoto = groupPhoto;
+
+            if (this.groupPhoto != null && !this.groupPhoto.equals("")) {
+                APIGetImageRequest request = new APIGetImageRequest(this);
+                request.execute(itemView.getContext().getString(R.string.API_URL) + "image?imagename=" + this.groupPhoto);
+            }
+        }
+
+        @Override
+        public void callback(int callbackType, Object result) {
+            if (callbackType == CallbackType.DOWNLOADIMAGE_CALLBACK) {
+                if (imgGroup != null && result != null && result instanceof Bitmap) {
+                    imgGroup.setImageBitmap((Bitmap)result);
+                }
+            }
+        }
     }
 
-    public GroupAdapter(ArrayList<Group> data, Context context) {
-        super(context, R.layout.grouplist_item, data);
+    public GroupAdapter(ArrayList<Group> data) {
         this.data = data;
-        this.context = context;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        Group dataItem = getItem(position);
-        ViewHolder viewHolder;
-
-        final View result;
-
-        if (convertView == null) {
-            viewHolder = new ViewHolder();
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-            convertView = inflater.inflate(R.layout.grouplist_item, parent, false);
-            viewHolder.txtName = (TextView) convertView.findViewById(R.id.groupitem_name);
-            viewHolder.txtDescription = (TextView) convertView.findViewById(R.id.groupitem_desc);
-
-            result = convertView;
-
-            convertView.setTag(viewHolder);
-        } else {
-            viewHolder = (ViewHolder) convertView.getTag();
-            result = convertView;
-        }
-
-        Animation animation = AnimationUtils.loadAnimation(context, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
-        result.startAnimation(animation);
-        lastPosition = position;
-
-        viewHolder.txtName.setText(dataItem.groupName);
-        viewHolder.txtDescription.setText(dataItem.groupDescription);
-
-        return result;
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.grouplist_cardview, parent, false);
+        ViewHolder vh = new ViewHolder(v);
+        return vh;
     }
 
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        final Group group = data.get(position);
+
+        if (group != null) {
+            holder.setGroupPhoto(group.groupPhoto);
+            holder.txtName.setText(group.groupName);
+            holder.txtDescription.setText(group.groupDescription);
+            holder.cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ActivityCallbacks.request(ActivityCallbackType.GROUPOPEN_CALLBACK, group);
+                }
+            });
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return data.size();
+    }
 }

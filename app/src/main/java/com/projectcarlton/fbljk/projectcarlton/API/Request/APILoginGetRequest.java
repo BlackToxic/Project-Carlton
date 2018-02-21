@@ -2,14 +2,10 @@ package com.projectcarlton.fbljk.projectcarlton.API.Request;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
-import com.projectcarlton.fbljk.projectcarlton.Activities.LoginActivity;
-import com.projectcarlton.fbljk.projectcarlton.R;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

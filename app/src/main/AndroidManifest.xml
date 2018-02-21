@@ -14,9 +14,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_projectcarltonlogo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/ic_projectcarltonlogo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <receiver
@@ -47,7 +47,7 @@
         </service>
 
         <activity
-            android:name=".Activities.LoginActivity"
+            android:name=".Activities.Core.WelcomeActivity"
             android:theme="@style/AppThemeNoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -56,27 +56,39 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activities.RegisterActivity"
+            android:name=".Activities.Core.LoginActivity"
+            android:theme="@style/AppThemeNoActionBar">
+
+        </activity>
+        <activity
+            android:name=".Activities.Core.RegisterActivity"
             android:theme="@style/AppThemeNoActionBar" />
         <activity
-            android:name=".Activities.GroupsActivity"
+            android:name=".Activities.Core.GroupsActivity"
             android:theme="@style/AppThemeNoActionBar" />
         <activity
-            android:name=".Activities.NewGroupActivity"
+            android:name=".Activities.Core.NewGroupActivity"
             android:theme="@style/AppThemeNoActionBar" />
         <activity
-            android:name=".Activities.GroupInvitationsActivity"
-            android:theme="@style/AppThemeNoActionBar"/>
-        <activity
-            android:name=".Activities.GroupActivity"
+            android:name=".Activities.Core.GroupInvitationsActivity"
             android:theme="@style/AppThemeNoActionBar" />
         <activity
-            android:name=".Activities.InviteActivity"
+            android:name=".Activities.Core.GroupActivity"
+            android:theme="@style/AppThemeNoActionBar" />
+        <activity
+            android:name=".Activities.Core.InviteActivity"
             android:theme="@style/AppThemeNoActionBar">
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/user_searchable"/>
+                android:resource="@xml/user_searchable" />
         </activity>
+        <activity
+            android:name=".Activities.Moduls.MemberActivity"
+            android:theme="@style/AppThemeNoActionBar" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>
