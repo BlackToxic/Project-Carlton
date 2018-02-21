@@ -16,6 +16,7 @@ import com.projectcarlton.fbljk.projectcarlton.API.Callback.APIUtilCallback.APIU
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallbackType;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallbacks;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
+import com.projectcarlton.fbljk.projectcarlton.Cache.SettingsCache;
 import com.projectcarlton.fbljk.projectcarlton.Helpers.APIUtil;
 import com.projectcarlton.fbljk.projectcarlton.R;
 
@@ -86,7 +87,7 @@ public class NewGroupActivity extends AppCompatActivity implements APIUtilCallba
 
         if (!groupName.equals("") && !groupDesc.equals("")) {
             progressBarLayout.setVisibility(View.VISIBLE);
-            apiUtil.createGroupAsync(groupName, groupDesc, GroupsActivity.currentUser.userId);
+            apiUtil.createGroupAsync(groupName, groupDesc, SettingsCache.CURRENTUSER.userId);
         }
     }
 

@@ -17,6 +17,7 @@ import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.Ac
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallbacks;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
 import com.projectcarlton.fbljk.projectcarlton.Adapter.GroupAdapter;
+import com.projectcarlton.fbljk.projectcarlton.Cache.SettingsCache;
 import com.projectcarlton.fbljk.projectcarlton.Data.Group;
 import com.projectcarlton.fbljk.projectcarlton.Data.User;
 import com.projectcarlton.fbljk.projectcarlton.Helpers.APIUtil;
@@ -26,7 +27,6 @@ import java.util.ArrayList;
 
 public class GroupsActivity extends AppCompatActivity implements APIUtilCallback, ActivityCallback {
 
-    public static User currentUser;
     private ArrayList<Group> groups;
 
     private SwipeRefreshLayout refreshLayout;
@@ -65,10 +65,10 @@ public class GroupsActivity extends AppCompatActivity implements APIUtilCallback
         groupListView.setLayoutManager(layoutManager);
 
         if (getIntent() != null && getIntent().getExtras() != null) {
-            currentUser = new User();
-            currentUser.userId = getIntent().getExtras().getString("UserId");
-            currentUser.userName = getIntent().getExtras().getString("UserName");
-            currentUser.userPassword = getIntent().getExtras().getString("UserPassword");
+            SettingsCache.CURRENTUSER = new User();
+            SettingsCache.CURRENTUSER.userId = getIntent().getExtras().getString("UserId");
+            SettingsCache.CURRENTUSER.userName = getIntent().getExtras().getString("UserName");
+            SettingsCache.CURRENTUSER.userPassword = getIntent().getExtras().getString("UserPassword");
 
             loadGroups();
         }
@@ -125,7 +125,7 @@ public class GroupsActivity extends AppCompatActivity implements APIUtilCallback
     public void loadGroups() {
         refreshLayout.setRefreshing(true);
 
-        apiUtil.loadGroupsAsync(currentUser.userId);
+        apiUtil.loadGroupsAsync(SettingsCache.CURRENTUSER.userId);
     }
 
     public void openGroup(Group group) {
