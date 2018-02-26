@@ -5,13 +5,16 @@ import android.os.AsyncTask;
 
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 public class APIPostImageRequest extends AsyncTask<String, Void, String> {
 
     private int callbackType;
@@ -36,7 +39,7 @@ public class APIPostImageRequest extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... strings) {
         String urlS = strings[0];
-        String result;
+        String result = "";
         String inputLine = "";
 
         try {
@@ -73,10 +76,20 @@ public class APIPostImageRequest extends AsyncTask<String, Void, String> {
             os.flush();
             os.close();
 
-            result = connection.getResponseMessage();
+            InputStreamReader streamReader = new InputStreamReader(connection.getInputStream());
+            BufferedReader reader = new BufferedReader(streamReader);
+            StringBuilder stringBuilder = new StringBuilder();
+
+            while ((inputLine = reader.readLine()) != null) {
+                stringBuilder.append(inputLine);
+            }
+
+            reader.close();
+            streamReader.close();
+
+            result = stringBuilder.toString();
         } catch (Exception e) {
             e.printStackTrace();
-            result = null;
         }
 
         return result;

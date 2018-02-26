@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+@Deprecated
 public class APIPostRequest extends AsyncTask<String, Void, String> {
 
     private static final String REQUEST_METHOD = "POST";
