@@ -69,6 +69,8 @@ public class GroupsActivity extends AppCompatActivity implements APIUtilCallback
             SettingsCache.CURRENTUSER.userId = getIntent().getExtras().getString("UserId");
             SettingsCache.CURRENTUSER.userName = getIntent().getExtras().getString("UserName");
             SettingsCache.CURRENTUSER.userPassword = getIntent().getExtras().getString("UserPassword");
+            SettingsCache.CURRENTUSER.userEmail = getIntent().getExtras().getString("UserEmail");
+            SettingsCache.CURRENTUSER.userPhoto = getIntent().getExtras().getString("UserPhoto");
 
             loadGroups();
         }

@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.APIUtilCallback.APIUtilCallback;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
+import com.projectcarlton.fbljk.projectcarlton.Cache.SettingsCache;
 import com.projectcarlton.fbljk.projectcarlton.Data.User;
 import com.projectcarlton.fbljk.projectcarlton.Helpers.APIUtil;
 import com.projectcarlton.fbljk.projectcarlton.R;
@@ -70,6 +71,7 @@ public class WelcomeActivity extends AppCompatActivity implements APIUtilCallbac
 
     private void checkForLoginData() {
         SharedPreferences pref = getSharedPreferences("PROJECTCARLTON_PREF", MODE_PRIVATE);
+        SettingsCache.setPreferences(pref);
         String username = pref.getString("UserName", null);
         String password = pref.getString("UserPassword", null);
 
@@ -86,6 +88,11 @@ public class WelcomeActivity extends AppCompatActivity implements APIUtilCallbac
     }
 
     @Override
+    public void onBackPressed() {
+        finish();
+    }
+
+    @Override
     public void callback(int callbackType, Object result) {
         if (callbackType == CallbackType.LOGIN_CALLBACK) {
             if (result != null && result instanceof User) {
@@ -96,6 +103,8 @@ public class WelcomeActivity extends AppCompatActivity implements APIUtilCallbac
                 bundle.putString("UserId", user.userId);
                 bundle.putString("UserName", user.userName);
                 bundle.putString("UserPassword", user.userPassword);
+                bundle.putString("UserEmail", user.userEmail);
+                bundle.putString("UserPhoto", user.userPhoto);
                 intent.putExtras(bundle);
                 startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(WelcomeActivity.this).toBundle());
             } else {
