@@ -2,7 +2,16 @@ package com.projectcarlton.fbljk.projectcarlton.Helpers;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.telecom.Call;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.APIUtilCallback.APIUtilCallback;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
@@ -11,6 +20,9 @@ import com.projectcarlton.fbljk.projectcarlton.API.Exception.APIExceptionType;
 import com.projectcarlton.fbljk.projectcarlton.API.Request.APIGetImageRequest;
 import com.projectcarlton.fbljk.projectcarlton.API.Request.APIGetRequest;
 import com.projectcarlton.fbljk.projectcarlton.API.Request.APILoginGetRequest;
+import com.projectcarlton.fbljk.projectcarlton.API.Request.APIPostImageRequest;
+import com.projectcarlton.fbljk.projectcarlton.API.Request.APIPostRequest;
+import com.projectcarlton.fbljk.projectcarlton.API.Request.VolleyMultipartRequest;
 import com.projectcarlton.fbljk.projectcarlton.Activities.Core.GroupActivity;
 import com.projectcarlton.fbljk.projectcarlton.Activities.Core.GroupsActivity;
 import com.projectcarlton.fbljk.projectcarlton.Cache.SettingsCache;
@@ -23,7 +35,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class APIUtil implements APICallback {
 
@@ -45,6 +60,12 @@ public class APIUtil implements APICallback {
     public void getLoginAsync(String username, String password) {
         APILoginGetRequest request = new APILoginGetRequest(this, CallbackType.LOGIN_CALLBACK, 1000, context);
         request.execute(BASE_URL, username, password);
+    }
+
+    public void getLogoutAsync(String userid) {
+        String apiUrl = BASE_URL + "user?logout=1&userid=" + userid;
+        APIGetRequest request = new APIGetRequest(this, CallbackType.LOGOUT_CALLBACK, 5000);
+        request.execute(apiUrl);
     }
 
     public void getRegisterAsync(String email, String username, String password) {
@@ -118,12 +139,90 @@ public class APIUtil implements APICallback {
         request.execute(BASE_URL + "image?imagename=" + imagename);
     }
 
+    public void updateUserAsync(final String userid, final String username, final String useremail) {
+        StringRequest request = new StringRequest(Request.Method.POST, BASE_URL + "user",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        callback(CallbackType.UPLOADIMAGE_CALLBACK, response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        callback(CallbackType.UPLOADIMAGE_CALLBACK, null);
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("userid", userid);
+                params.put("username", username);
+                params.put("useremail", useremail);
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(request);
+    }
+
+    public void uploadProfileImage(final Bitmap image, final String userid, final String username, final String useremail) {
+        VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, BASE_URL + "user",
+                new Response.Listener<NetworkResponse>() {
+                    @Override
+                    public void onResponse(NetworkResponse response) {
+                        String resString = "";
+                        try {
+                            resString = new String(response.data);
+
+                            if (resString.equals("1")) {
+                                handler.callback(CallbackType.UPLOADIMAGE_CALLBACK, resString);
+                            } else {
+                                JSONObject obj = new JSONObject(resString);
+
+                                if (obj.has("code")) {
+                                    APIException exception = new APIException(obj.getInt("code"), "");
+                                    handler.callback(CallbackType.UPLOADIMAGE_CALLBACK, exception);
+                                }
+                            }
+                        } catch (JSONException e) {
+                            handler.callback(CallbackType.UPLOADIMAGE_CALLBACK, new APIException(APIExceptionType.UNKNOWN_ERROR, ""));
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                    }
+                }) {
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("userid", userid);
+                params.put("username", username);
+                params.put("useremail", useremail);
+                return params;
+            }
+
+            @Override
+            protected Map<String, DataPart> getByteData() {
+                Map<String, DataPart> params = new HashMap<>();
+                long imagename = System.currentTimeMillis();
+                params.put("pic", new DataPart(imagename + ".png", FileHelper.getFileDataFromDrawable(image)));
+                return params;
+            }
+        };
+
+        Volley.newRequestQueue(context).add(volleyMultipartRequest);
+    }
+
     @Override
     public void callback(int callbackType, Object result) {
         try {
             if (callbackType == CallbackType.LOGIN_CALLBACK) {
                 if (result != null && result instanceof String && !result.equals("")) {
-                    JSONObject resultObject = new JSONObject((String)result);
+                    JSONObject resultObject = new JSONObject((String) result);
 
                     if (resultObject.has("code")) {
                         APIException exception = new APIException(resultObject.getInt("code"), "");
@@ -133,8 +232,25 @@ public class APIUtil implements APICallback {
                         user.userId = resultObject.getString("id");
                         user.userName = resultObject.getString("username");
                         user.userPassword = resultObject.getString("hash");
+                        user.userEmail = resultObject.getString("useremail");
+                        user.userPhoto = resultObject.getString("userphoto");
 
                         handler.callback(callbackType, user);
+                    } else {
+                        handler.callback(callbackType, new APIException(APIExceptionType.UNKNOWN_ERROR, ""));
+                    }
+                } else {
+                    handler.callback(callbackType, new APIException(APIExceptionType.UNKNOWN_ERROR, ""));
+                }
+            } else if (callbackType == CallbackType.LOGOUT_CALLBACK) {
+                if (result != null && result instanceof String && !result.equals("")) {
+                    JSONObject resultObject = new JSONObject((String)result);
+
+                    if (resultObject.has("code")) {
+                        APIException exception = new APIException(resultObject.getInt("code"), "");
+                        handler.callback(callbackType, exception);
+                    } else if (resultObject.has("id")) {
+                        handler.callback(callbackType, true);
                     } else {
                         handler.callback(callbackType, new APIException(APIExceptionType.UNKNOWN_ERROR, ""));
                     }
@@ -352,6 +468,12 @@ public class APIUtil implements APICallback {
                 }
             } else if (callbackType == CallbackType.DOWNLOADIMAGE_CALLBACK) {
                 if (result != null && result instanceof Bitmap) {
+                    handler.callback(callbackType, result);
+                } else {
+                    handler.callback(callbackType, new APIException(APIExceptionType.UNKNOWN_ERROR, ""));
+                }
+            } else if (callbackType == CallbackType.UPLOADIMAGE_CALLBACK) {
+                if (result != null && result instanceof String) {
                     handler.callback(callbackType, result);
                 } else {
                     handler.callback(callbackType, new APIException(APIExceptionType.UNKNOWN_ERROR, ""));

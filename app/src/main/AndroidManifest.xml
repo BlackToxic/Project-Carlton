@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <permission
@@ -57,7 +58,7 @@
         </activity>
         <activity
             android:name=".Activities.Core.LoginActivity"
-            android:theme="@style/AppThemeNoActionBar"></activity>
+            android:theme="@style/AppThemeNoActionBar" />
         <activity
             android:name=".Activities.Core.RegisterActivity"
             android:theme="@style/AppThemeNoActionBar" />
@@ -83,13 +84,13 @@
         <activity
             android:name=".Activities.Moduls.MemberActivity"
             android:theme="@style/AppThemeNoActionBar" />
+        <activity android:name=".Activities.Core.ProfileActivity" />
 
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <activity android:name=".Activities.Core.ProfileActivity"
-                  android:theme="@style/AppThemeNoActionBar"/>
+        <activity android:name=".Activities.Core.ProfileSettingsActivity"></activity>
     </application>
 
 </manifest>
