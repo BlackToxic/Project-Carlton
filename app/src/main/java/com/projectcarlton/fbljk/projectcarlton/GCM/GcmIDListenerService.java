@@ -16,7 +16,7 @@ public class GcmIDListenerService extends InstanceIDListenerService {
         String password = pref.getString("UserPassword", null);
 
         if (username != null && password != null){
-            APILoginGetRequest request = new APILoginGetRequest(null, CallbackType.LOGIN_CALLBACK, 1000, getApplicationContext());
+            APILoginGetRequest request = new APILoginGetRequest(getApplicationContext(), null, CallbackType.LOGIN_CALLBACK);
             request.execute(getString(R.string.API_URL), username, password);
         }
     }

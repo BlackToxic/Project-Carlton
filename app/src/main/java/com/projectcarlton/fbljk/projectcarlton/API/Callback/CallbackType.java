@@ -17,5 +17,8 @@ public class CallbackType {
     public static final int SEARCHUSERS_CALLBACK        = 0x13;
     public static final int LOGOUT_CALLBACK             = 0x14;
     public static final int UPLOADIMAGE_CALLBACK        = 0x15;
+    public static final int GETGRADESFORUSER_CALLBACK   = 0x16;
+    public static final int GETGRADESBYGROUP_CALLBACK   = 0x17;
+    public static final int CREATEGRADE_CALLBACK        = 0x18;
 
 }

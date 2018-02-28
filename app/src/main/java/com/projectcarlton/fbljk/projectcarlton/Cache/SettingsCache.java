@@ -1,7 +1,10 @@
 package com.projectcarlton.fbljk.projectcarlton.Cache;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.projectcarlton.fbljk.projectcarlton.Data.Group;
 import com.projectcarlton.fbljk.projectcarlton.Data.User;
 
@@ -10,6 +13,7 @@ public class SettingsCache {
     private SettingsCache() {}
 
     private static SharedPreferences preferences;
+    private static RequestQueue requestQueue;
 
     public static User CURRENTUSER;
     public static Group CURRENTGROUP;
@@ -23,6 +27,13 @@ public class SettingsCache {
         }
 
         return false;
+    }
+
+    public static RequestQueue getRequestQueue(Context context) {
+        if (requestQueue == null)
+            requestQueue = Volley.newRequestQueue(context);
+
+        return requestQueue;
     }
 
     public static void logout() {

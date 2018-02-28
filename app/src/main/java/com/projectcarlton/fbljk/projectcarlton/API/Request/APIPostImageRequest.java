@@ -1,105 +1,71 @@
 package com.projectcarlton.fbljk.projectcarlton.API.Request;
 
+import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
+import com.projectcarlton.fbljk.projectcarlton.Cache.SettingsCache;
+import com.projectcarlton.fbljk.projectcarlton.Helpers.FileHelper;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-@Deprecated
-public class APIPostImageRequest extends AsyncTask<String, Void, String> {
+public class APIPostImageRequest {
 
-    private int callbackType;
+    private Context context;
     private APICallback callback;
-    private HashMap<String, String> params;
-    private Bitmap imageToUpload;
+    private int callbackType;
+    private Map<String, String> parameters;
 
-    private String delimiter = "--";
-    private String boundary = "SwA" + Long.toString(System.currentTimeMillis()) + "SwA";
-
-    public APIPostImageRequest(APICallback callback, int callbackType, Bitmap img) {
+    public APIPostImageRequest(Context context, APICallback callback, int callbackType) {
+        this.context = context;
         this.callback = callback;
         this.callbackType = callbackType;
-        this.imageToUpload = img;
-        this.params = new HashMap<String, String>();
+        this.parameters = new HashMap<String, String>();
     }
 
-    public void addParameter(String paramName, String value) {
-        params.put(paramName, value);
+    public void addParameter(String key, String value) {
+        this.parameters.put(key, value);
     }
 
-    @Override
-    protected String doInBackground(String... strings) {
-        String urlS = strings[0];
-        String result = "";
-        String inputLine = "";
+    public void execute(String url, final Bitmap image) {
+        VolleyMultipartRequest request = new VolleyMultipartRequest(Request.Method.POST, url,
+                new Response.Listener<NetworkResponse>() {
+                    @Override
+                    public void onResponse(NetworkResponse response) {
+                        String resultString = new String(response.data);
 
-        try {
-            URL url = new URL(urlS);
+                        if (callback != null)
+                            callback.callback(callbackType, resultString);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (callback != null)
+                            callback.callback(callbackType, null);
+                    }
+                }) {
 
-            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            connection.setRequestProperty("Connection", "Keep-Alive");
-            connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
-            connection.connect();
-            OutputStream os = connection.getOutputStream();
-
-            for (Map.Entry<String, String> entry : params.entrySet()) {
-                os.write((delimiter + boundary + "rn").getBytes());
-                os.write(("Content-Type: text/plainrn").getBytes());
-                os.write(("Content-Disposition: form-data; name=" + entry.getKey() + "rn").getBytes());
-                os.write(("rn" + entry.getValue() + "rn").getBytes());
+            @Override
+            protected Map<String, String> getParams() {
+                return parameters;
             }
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            imageToUpload.compress(Bitmap.CompressFormat.PNG, 0, baos);
-
-            os.write((delimiter + boundary + "rn").getBytes());
-            os.write(("Content-Disposition: form-data; name=file; filename=newimage.pngrn").getBytes());
-            os.write(("Content-Type: application/octet-streamrn").getBytes());
-            os.write(("Content-Transfer-Encoding: binaryrn").getBytes());
-            os.write("rn".getBytes());
-
-            os.write(baos.toByteArray());
-            os.write("\r\n".getBytes());
-
-            os.flush();
-            os.close();
-
-            InputStreamReader streamReader = new InputStreamReader(connection.getInputStream());
-            BufferedReader reader = new BufferedReader(streamReader);
-            StringBuilder stringBuilder = new StringBuilder();
-
-            while ((inputLine = reader.readLine()) != null) {
-                stringBuilder.append(inputLine);
+            @Override
+            protected Map<String, DataPart> getByteData() {
+                Map<String, DataPart> params = new HashMap<String, DataPart>();
+                long imagename = System.currentTimeMillis();
+                params.put("pic", new DataPart(imagename + ".png", FileHelper.getFileDataFromDrawable(image)));
+                return params;
             }
+        };
 
-            reader.close();
-            streamReader.close();
-
-            result = stringBuilder.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return result;
+        SettingsCache.getRequestQueue(context).add(request);
     }
 
-    @Override
-    public void onPostExecute(String result) {
-        super.onPostExecute(result);
-
-        if (callback != null)
-            callback.callback(callbackType, result);
-    }
 }
