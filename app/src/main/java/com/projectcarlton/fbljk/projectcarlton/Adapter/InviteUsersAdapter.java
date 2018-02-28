@@ -11,21 +11,23 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
+import com.projectcarlton.fbljk.projectcarlton.API.Callback.APIUtilCallback.APIUtilCallback;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
-import com.projectcarlton.fbljk.projectcarlton.API.Request.APIGetRequest;
 import com.projectcarlton.fbljk.projectcarlton.Activities.Core.GroupActivity;
 import com.projectcarlton.fbljk.projectcarlton.Activities.Core.GroupsActivity;
+import com.projectcarlton.fbljk.projectcarlton.Cache.SettingsCache;
 import com.projectcarlton.fbljk.projectcarlton.Data.User;
+import com.projectcarlton.fbljk.projectcarlton.Helpers.APIUtil;
 import com.projectcarlton.fbljk.projectcarlton.R;
 
 import java.util.ArrayList;
 
-public class InviteUsersAdapter extends ArrayAdapter<User> implements View.OnClickListener, APICallback {
+public class InviteUsersAdapter extends ArrayAdapter<User> implements View.OnClickListener, APIUtilCallback {
 
     private ArrayList<User> data;
     private Context context;
     private int lastPosition = -1;
+    private APIUtil apiUtil;
 
     private static class ViewHolder {
         int position;
@@ -37,6 +39,7 @@ public class InviteUsersAdapter extends ArrayAdapter<User> implements View.OnCli
        super(context, R.layout.inviteuserlist_item, data);
        this.data = data;
        this.context = context;
+       apiUtil = new APIUtil(context, this);
    }
 
    @Override
@@ -78,13 +81,9 @@ public class InviteUsersAdapter extends ArrayAdapter<User> implements View.OnCli
         ViewHolder viewHolder = (ViewHolder)view.getTag();
         User user = (User) getItem(viewHolder.position);
 
-        String apiUrl = "";
-        APIGetRequest request;
         switch (view.getId()) {
             case R.id.inviteuserlistitem_invitebutton:
-                apiUrl = context.getString(R.string.API_URL) + "invite?groupid=" + GroupActivity.currentGroup.groupId + "&fromuserid=" + GroupsActivity.currentUser.userId + "&userid=" + user.userId;
-                request = new APIGetRequest(this, CallbackType.INVITEUSER_CALLBACK, 5000);
-                request.execute(apiUrl);
+                apiUtil.inviteUserAsync(SettingsCache.CURRENTGROUP.groupId, SettingsCache.CURRENTUSER.userId, user.userId);
 
                 viewHolder.inviteButton.setText(R.string.inviteusers_alreadyinvited_text);
                 viewHolder.inviteButton.setBackgroundColor(Color.WHITE);
@@ -95,7 +94,7 @@ public class InviteUsersAdapter extends ArrayAdapter<User> implements View.OnCli
     }
 
     @Override
-    public void callback(int callbackType, Object resultString) {
+    public void callback(int callbackType, Object result) {
         if (callbackType == CallbackType.INVITEUSER_CALLBACK) {
 
         }

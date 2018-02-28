@@ -12,22 +12,27 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
+import com.projectcarlton.fbljk.projectcarlton.API.Callback.APIUtilCallback.APIUtilCallback;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallbackType;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.ActivityCallbacks.ActivityCallbacks;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
-import com.projectcarlton.fbljk.projectcarlton.API.Request.APIGetRequest;
+import com.projectcarlton.fbljk.projectcarlton.Cache.SettingsCache;
+import com.projectcarlton.fbljk.projectcarlton.Helpers.APIUtil;
 import com.projectcarlton.fbljk.projectcarlton.R;
 
-public class NewGroupActivity extends AppCompatActivity implements APICallback {
+public class NewGroupActivity extends AppCompatActivity implements APIUtilCallback {
 
     private EditText groupname, groupdesc;
     private LinearLayout progressBarLayout;
+
+    private APIUtil apiUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_group);
+
+        apiUtil = new APIUtil(getApplicationContext(), this);
 
         Toolbar newgrouptoolbar = (Toolbar) findViewById(R.id.newgroup_toolbar);
         newgrouptoolbar.setTitle(R.string.newgroup_title);
@@ -81,22 +86,22 @@ public class NewGroupActivity extends AppCompatActivity implements APICallback {
         String groupDesc = groupdesc.getText().toString();
 
         if (!groupName.equals("") && !groupDesc.equals("")) {
-            String apiUrl = getString(R.string.API_URL) + "group?userid=" + GroupsActivity.currentUser.userId + "&groupname=" + groupName + "&groupdescription=" + groupDesc;
-            APIGetRequest request = new APIGetRequest(this, CallbackType.CREATEGROUP_CALLBACK, 5000);
             progressBarLayout.setVisibility(View.VISIBLE);
-            request.execute(apiUrl);
+            apiUtil.createGroupAsync(groupName, groupDesc, SettingsCache.CURRENTUSER.userId);
         }
     }
 
     @Override
-    public void callback(int callbackType, Object resultString) {
+    public void callback(int callbackType, Object result) {
         if (callbackType == CallbackType.CREATEGROUP_CALLBACK) {
-            if (resultString != null && !resultString.equals("")) {
-                ActivityCallbacks.request(ActivityCallbackType.GROUPRELOAD_CALLBACK);
-                onBackPressed();
+            if (result != null && result instanceof Boolean) {
+                if ((boolean)result) {
+                    ActivityCallbacks.request(ActivityCallbackType.GROUPRELOAD_CALLBACK);
+                    onBackPressed();
+                }
             }
-
-            progressBarLayout.setVisibility(View.GONE);
         }
+
+        progressBarLayout.setVisibility(View.GONE);
     }
 }

@@ -5,6 +5,8 @@ public class User {
     public String userId;
     public String userName;
     public String userPassword;
+    public String userEmail;
+    public String userPhoto;
 
     public User() {}
 

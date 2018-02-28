@@ -10,14 +10,15 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
-import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
+import com.projectcarlton.fbljk.projectcarlton.API.Callback.APIUtilCallback.APIUtilCallback;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.CallbackType;
-import com.projectcarlton.fbljk.projectcarlton.API.Request.APIGetRequest;
 import com.projectcarlton.fbljk.projectcarlton.Activities.Core.GroupActivity;
 import com.projectcarlton.fbljk.projectcarlton.Activities.Core.GroupsActivity;
 import com.projectcarlton.fbljk.projectcarlton.Activities.Core.InviteActivity;
 import com.projectcarlton.fbljk.projectcarlton.Adapter.MemberAdapter;
+import com.projectcarlton.fbljk.projectcarlton.Cache.SettingsCache;
 import com.projectcarlton.fbljk.projectcarlton.Data.User;
+import com.projectcarlton.fbljk.projectcarlton.Helpers.APIUtil;
 import com.projectcarlton.fbljk.projectcarlton.R;
 
 import org.json.JSONArray;
@@ -25,7 +26,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class MemberActivity extends AppCompatActivity implements APICallback {
+public class MemberActivity extends AppCompatActivity implements APIUtilCallback {
 
     private Button inviteButton;
     private ListView memberList;
@@ -34,11 +35,14 @@ public class MemberActivity extends AppCompatActivity implements APICallback {
 
     private ArrayList<User> users;
     private MemberAdapter adapter;
+    private APIUtil apiUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_member);
+
+        apiUtil = new APIUtil(getApplicationContext(), this);
 
         Toolbar membertoolbar = (Toolbar) findViewById(R.id.member_toolbar);
         membertoolbar.setTitle(R.string.group_memberbutton_text);
@@ -58,7 +62,7 @@ public class MemberActivity extends AppCompatActivity implements APICallback {
         memberList = (ListView) findViewById(R.id.member_memberlist);
         spacer = (View) findViewById(R.id.member_spacer_bottom);
 
-        if (!GroupActivity.isUserAdmin()) {
+        if (!SettingsCache.isUserAdmin()) {
             inviteButton.setVisibility(View.GONE);
             spacer.setVisibility(View.GONE);
         }
@@ -69,55 +73,27 @@ public class MemberActivity extends AppCompatActivity implements APICallback {
     private void loadMembers() {
         progressBarLayout.setVisibility(View.VISIBLE);
 
-        String apiUrl = getString(R.string.API_URL) + "user?groupid=" + GroupActivity.currentGroup.groupId;
-        APIGetRequest request = new APIGetRequest(this, CallbackType.LOADUSERS_CALLBACK, 5000);
-        request.execute(apiUrl);
+        apiUtil.loadUsersByGroupAsync(SettingsCache.CURRENTGROUP.groupId);
     }
 
     @Override
-    public void callback(int callbackType, Object resultString) {
+    public void callback(int callbackType, Object result) {
         if (callbackType == CallbackType.LOADUSERS_CALLBACK) {
-            if (resultString != null && !resultString.equals("")) {
-                try {
-                    if (((String)resultString).contains("id")) {
-                        users = new ArrayList<User>();
-
-                        JSONArray array = new JSONArray((String)resultString);
-                        for (int i = 0; i < array.length(); i++) {
-                            JSONObject childObject = array.getJSONObject(i);
-
-                            User newUser = new User();
-                            newUser.userId = childObject.getString("id");
-                            newUser.userName = childObject.getString("username");
-
-                            if (!newUser.userId.equals(GroupsActivity.currentUser.userId))
-                                users.add(newUser);
-                        }
-
-                        adapter = new MemberAdapter(users, getApplicationContext());
-                        memberList.setAdapter(adapter);
-                        memberList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            if (result != null && result instanceof ArrayList) {
+                users = (ArrayList<User>)result;
+                adapter = new MemberAdapter(users, getApplicationContext());
+                memberList.setAdapter(adapter);
+                memberList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
 
-                            }
-                        });
-                        memberList.setVisibility(View.VISIBLE);
-                    } else {
-                        JSONObject resultObject = new JSONObject((String)resultString);
-
-                        if (resultObject.has("code")) {
-                            int errorCode = resultObject.getInt("code");
-
-                        }
                     }
-                } catch (Exception ex) {
-
-                }
-
-                progressBarLayout.setVisibility(View.GONE);
+                });
+                memberList.setVisibility(View.VISIBLE);
             }
         }
+
+        progressBarLayout.setVisibility(View.GONE);
     }
 }
