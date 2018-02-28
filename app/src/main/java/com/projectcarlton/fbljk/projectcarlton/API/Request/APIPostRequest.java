@@ -1,71 +1,58 @@
 package com.projectcarlton.fbljk.projectcarlton.API.Request;
 
-import android.os.AsyncTask;
-
+import android.content.Context;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
+import com.projectcarlton.fbljk.projectcarlton.Cache.SettingsCache;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
-@Deprecated
-public class APIPostRequest extends AsyncTask<String, Void, String> {
+public class APIPostRequest {
 
-    private static final String REQUEST_METHOD = "POST";
-    private static final int READ_TIMEOUT = 15000;
-    private static final int CONNECTION_TIMEOUT = 15000;
-
-    private int callbackType;
+    private Context context;
     private APICallback callback;
+    private int callbackType;
+    private Map<String, String> parameters;
 
-    public APIPostRequest(APICallback callback, int callbackType) {
+    public APIPostRequest(Context context, APICallback callback, int callbackType) {
+        this.context = context;
         this.callback = callback;
         this.callbackType = callbackType;
+        this.parameters = new HashMap<String, String>();
     }
 
-    @Override
-    protected String doInBackground(String... strings){
-        String urlS = strings[0];
-        String result;
-        String inputLine = "";
+    public void addParameter(String key, String value) {
+        this.parameters.put(key, value);
+    }
 
-        try {
-            URL url = new URL(urlS);
+    public void execute(String url) {
+        StringRequest request = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        if (callback != null)
+                            callback.callback(callbackType, response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (callback != null)
+                            callback.callback(callbackType, null);
+                    }
+                }) {
 
-            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-            connection.setRequestMethod(REQUEST_METHOD);
-            connection.setReadTimeout(READ_TIMEOUT);
-            connection.setConnectTimeout(CONNECTION_TIMEOUT);
-
-            connection.connect();
-
-            InputStreamReader streamReader = new InputStreamReader(connection.getInputStream());
-            BufferedReader reader = new BufferedReader(streamReader);
-            StringBuilder stringBuilder = new StringBuilder();
-
-            while ((inputLine = reader.readLine()) != null) {
-                stringBuilder.append(inputLine);
+            @Override
+            protected Map<String, String> getParams() {
+                return parameters;
             }
+        };
 
-            reader.close();
-            streamReader.close();
-
-            result = stringBuilder.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-            result = null;
-        }
-
-        return result;
-    }
-
-    @Override
-    protected void onPostExecute(String result) {
-        super.onPostExecute(result);
-
-        if (callback != null)
-            callback.callback(callbackType, result);
+        SettingsCache.getRequestQueue(context).add(request);
     }
 
 }
