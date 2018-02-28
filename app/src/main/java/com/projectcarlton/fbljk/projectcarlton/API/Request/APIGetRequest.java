@@ -1,72 +1,44 @@
 package com.projectcarlton.fbljk.projectcarlton.API.Request;
 
-import android.os.AsyncTask;
+import android.content.Context;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.projectcarlton.fbljk.projectcarlton.API.Callback.APICallback;
+import com.projectcarlton.fbljk.projectcarlton.Cache.SettingsCache;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+public class APIGetRequest {
 
-public class APIGetRequest extends AsyncTask<String, Void, String> {
-
-    private static final String REQUEST_METHOD = "GET";
-    private int readTimeout = 1500;
-    private int connectionTimeout = 1500;
-
-    private int callbackType;
+    private Context context;
     private APICallback callback;
+    private int callbackType;
 
-    public APIGetRequest(APICallback callback, int callbackType, int timeOut) {
+    public APIGetRequest(Context context, APICallback callback, int callbackType) {
+        this.context = context;
         this.callback = callback;
         this.callbackType = callbackType;
-        this.readTimeout = timeOut;
-        this.connectionTimeout = timeOut;
     }
 
-    @Override
-    protected String doInBackground(String... strings){
-        String urlS = strings[0];
-        String result;
-        String inputLine = "";
+    public void execute(String url) {
+        StringRequest request = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        if (callback != null)
+                            callback.callback(callbackType, response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (callback != null)
+                            callback.callback(callbackType, null);
+                    }
+                }) {
+        };
 
-        try {
-            URL url = new URL(urlS);
-
-            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-            connection.setRequestMethod(REQUEST_METHOD);
-            connection.setReadTimeout(readTimeout);
-            connection.setConnectTimeout(connectionTimeout);
-
-            connection.connect();
-
-            InputStreamReader streamReader = new InputStreamReader(connection.getInputStream());
-            BufferedReader reader = new BufferedReader(streamReader);
-            StringBuilder stringBuilder = new StringBuilder();
-
-            while ((inputLine = reader.readLine()) != null) {
-                stringBuilder.append(inputLine);
-            }
-
-            reader.close();
-            streamReader.close();
-
-            result = stringBuilder.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-            result = null;
-        }
-
-        return result;
+        SettingsCache.getRequestQueue(context).add(request);
     }
-
-    @Override
-    protected void onPostExecute(String result) {
-        super.onPostExecute(result);
-
-        if (callback != null)
-            callback.callback(callbackType, result);
-    }
-
 }
