@@ -13,7 +13,7 @@
 
     <string name="registerresponse_existing_email">Es existiert bereits ein Account mit dieser Email-Adresse.</string>
     <string name="registerresponse_existing_username">Es existiert bereits ein Account mit diesem Benutzernamen.</string>
-    <string name="registerresponse_invalid_email">Ivalide Email-Adresse.</string>
+    <string name="registerresponse_invalid_email">Invalide Email-Adresse.</string>
     <string name="registerresponse_success">Eine Email mit einem Bestätigungslink wurde an Ihre Email-Adresse geschickt.</string>
 
     <string name="login_username_hint">Benutzername</string>
